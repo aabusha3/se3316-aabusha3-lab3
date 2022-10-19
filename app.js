@@ -8,7 +8,11 @@ const app = express();
 // });
 
 app.use('/', express.static('static'));
+
 const genres = fs.createReadStream("./lab3-data/genres.csv");
+const albums = fs.createReadStream("./lab3-data/raw_albums.csv");
+const artists = fs.createReadStream("./lab3-data/raw_artists.csv");
+const tracks = fs.createReadStream("./lab3-data/raw_tracks.csv");
 // app.get('/', (req, res) => {
 //     res.send('hello')
 // });
