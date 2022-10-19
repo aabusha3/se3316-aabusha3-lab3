@@ -2,6 +2,7 @@ const csv = require('csv-parser');
 const fs = require('fs');
 const express = require('express');
 const app = express();
+const genresRoute = express.Router();
 
 // app.get('/', (req, res) =>{
 //     res.send('Hello World');
@@ -9,16 +10,17 @@ const app = express();
 
 app.use('/', express.static('static'));
 
-const genres = fs.createReadStream("./lab3-data/genres.csv");
-const albums = fs.createReadStream("./lab3-data/raw_albums.csv");
-const artists = fs.createReadStream("./lab3-data/raw_artists.csv");
-const tracks = fs.createReadStream("./lab3-data/raw_tracks.csv");
-// app.get('/', (req, res) => {
-//     res.send('hello')
-// });
+app.use('/api/genres', genresRoute)
 
-app.get('/api/genres', (req, res) => {
-    genres
+const genresFile = fs.createReadStream("./lab3-data/genres.csv");
+const albumsFile = fs.createReadStream("./lab3-data/raw_albums.csv");
+const artistsFile = fs.createReadStream("./lab3-data/raw_artists.csv");
+const tracksFile = fs.createReadStream("./lab3-data/raw_tracks.csv");
+
+function getGenres(){}
+
+genresRoute.get('/', (req, res) => {
+    genresFile
     .on('error', (err) => {
         console.log(err);
     })
