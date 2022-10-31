@@ -3,14 +3,20 @@ const fs = require('fs');
 const express = require('express');
 const app = express();
 const genresRoute = express.Router();
+const artistsRoute = express.Router();
+const albumsRoute = express.Router();
+const tracksRoute = express.Router();
 
 const genresFile = fs.createReadStream("./lab3-data/genres.csv");
-const albumsFile = fs.createReadStream("./lab3-data/raw_albums.csv");
 const artistsFile = fs.createReadStream("./lab3-data/raw_artists.csv");
+const albumsFile = fs.createReadStream("./lab3-data/raw_albums.csv");
 const tracksFile = fs.createReadStream("./lab3-data/raw_tracks.csv");
 
 app.use('/', express.static('static'));
 app.use('/api/genres', genresRoute);
+app.use('/api/artists', artistsRoute);
+app.use('/api/albums', albumsRoute);
+app.use('/api/tracks', tracksRoute);
 
 genresRoute.use(express.json());
 
@@ -81,6 +87,31 @@ genresRoute.put('/:genre_id', (req, res) => {
 
 });
 
+
+genresRoute.get('/s2/:artist_id', (req, res) => {
+    console.log('hi1')
+    artistsFile
+    .on('error', (err) => {
+        console.log(err);
+    })
+
+    .pipe(csv())
+    .on('data', (row) => {
+        console.log('hi2')
+        if(parseInt(row["artist_id"]) === parseInt(req.params.genre_id)){
+            console.log('found it')
+            let str = `Artist ID: ${row["artist_id"]} Date Created: ${row["artist_date_created"]} Handle: ${row["artist_handle"]} Name: ${row["artist_name"]} Tags: ${row["tags"]} Favorites: ${row["artist_favorites"]}.\n`;
+            res.write(str);
+        }
+        //else {console.log(`${req.params.genre_id} not found: on ${row["genre_id"]}`)}
+        
+    })
+
+    .on('end', () => {
+        console.log('hi9')
+        return res.end();
+    })
+});
 
 const port = process.env.PORT || 3000;
 app.listen(port, () => console.log(`Listening To ${port}`))
