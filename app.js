@@ -35,7 +35,7 @@ genresRoute.get('/', (req, res) => {
     })
 });
 
-genresRoute.get('/1', (req, res) => {
+genresRoute.get('/s1', (req, res) => {
     genresFile
     .on('error', (err) => {
         console.log(err);
@@ -43,7 +43,7 @@ genresRoute.get('/1', (req, res) => {
 
     .pipe(csv())
     .on('data', (row) => {
-        let str = `Genre Names: ${row["title"]}  Genre ID: ${row["genre_id"]}  Parent ID: ${row["parent"]}.\n`;
+        let str = `Genre Names: ${row["title"]}   Genre ID: ${row["genre_id"]}   Parent ID: ${row["parent"]}.\n`;
         res.write(str);
     })
 
