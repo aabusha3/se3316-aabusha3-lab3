@@ -83,12 +83,12 @@ genresRoute.get('/:genre_id', (req, res) => {
     })
 });
 
-genresRoute.put('/:genre_id', (req, res) => {
+// genresRoute.put('/:genre_id', (req, res) => {
 
-});
+// });
 
 
-genresRoute.get('/s2/:artist_id', (req, res) => {
+artistsRoute.get('/s2/:artist_id', (req, res) => {
     console.log('hi1')
     artistsFile
     .on('error', (err) => {
@@ -98,13 +98,11 @@ genresRoute.get('/s2/:artist_id', (req, res) => {
     .pipe(csv())
     .on('data', (row) => {
         console.log('hi2')
-        if(parseInt(row["artist_id"]) === parseInt(req.params.genre_id)){
+        if(parseInt(row["artist_id"]) === parseInt(req.params.artist_id)){
             console.log('found it')
             let str = `Artist ID: ${row["artist_id"]} Date Created: ${row["artist_date_created"]} Handle: ${row["artist_handle"]} Name: ${row["artist_name"]} Tags: ${row["tags"]} Favorites: ${row["artist_favorites"]}.\n`;
             res.write(str);
-        }
-        //else {console.log(`${req.params.genre_id} not found: on ${row["genre_id"]}`)}
-        
+        }        
     })
 
     .on('end', () => {
