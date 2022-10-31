@@ -54,7 +54,7 @@ genresRoute.get('/:genre_id', (req, res) => {
     .pipe(csv())
     .on('data', (row) => {
         console.log('hi2')
-        if(row["genre_id"] == (req.params.genre_id)){
+        if(parseInt(row["genre_id"]) === parseInt(req.params.genre_id)){
             console.log('found it')
             res.write(row["genre_id"]);
         }
