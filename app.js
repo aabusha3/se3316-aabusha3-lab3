@@ -56,6 +56,18 @@ genresRoute.put('/:genre_id', (req, res) => {
 });
 
 
+genresRoute.post('/', (req, res) => {
+    const newID = req.body;
+    newID.genre_id = genresArr.length+1;
+    const indexID = genresArr.findIndex(g => parseInt(g['genre_id']) === parseInt(newID.genre_id));
+    if(!(newID['#tracks'] && newID.parent && newID.title && newID.top_level)) return res.status(404).send('please make sure all parts of the genre are present in your request');
+    else {
+        genresArr[indexID] = newID;
+        res.send(newID);
+    }
+});
+
+
 genresRoute.post('/:genre_id', (req, res) => {
     const newID = req.body;
     const indexID = genresArr.findIndex(g => parseInt(g['genre_id']) === parseInt(req.params.genre_id));
