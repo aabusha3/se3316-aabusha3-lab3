@@ -33,7 +33,7 @@ genresRoute.get('/', (req, res) => {
         let str = `Genre ID: ${row["genre_id"]} Track: ${row["#tracks"]} Parent: ${row["parent"]} Title: ${row["title"]} Top Level: ${row["top_level"]}.\n`;
         //console.log(row["genre_id"].toString());
         //res.write(JSON.stringify(row)+'\n');
-        res.write(str);
+        res.send('<p>'+str+'</p>');
     })
 
     .on('end', () => {
@@ -50,7 +50,7 @@ genresRoute.get('/s1', (req, res) => {
     .pipe(csv())
     .on('data', (row) => {
         let str = `Genre Names: ${row["title"]}   Genre ID: ${row["genre_id"]}   Parent ID: ${row["parent"]}.\n`;
-        res.write(str);
+        res.send(JSON.stringify(str));
     })
 
     .on('end', () => {
@@ -71,7 +71,7 @@ genresRoute.get('/:genre_id', (req, res) => {
         console.log('hi2')
         if(parseInt(row["genre_id"]) === parseInt(req.params.genre_id)){
             console.log('found it')
-            res.write(row["genre_id"]);
+            res.send(JSON.stringify(row["genre_id"]));
         }
         //else {console.log(`${req.params.genre_id} not found: on ${row["genre_id"]}`)}
         
@@ -101,7 +101,7 @@ artistsRoute.get('/s2/:artist_id', (req, res) => {
         if(parseInt(row["artist_id"]) === parseInt(req.params.artist_id)){
             console.log('found it')
             let str = `Artist ID: ${row["artist_id"]} Date Created: ${row["artist_date_created"]} Handle: ${row["artist_handle"]} Name: ${row["artist_name"]} Tags: ${row["tags"]} Favorites: ${row["artist_favorites"]}.\n`;
-            res.write(str);
+            res.send(JSON.stringify(str));
         }        
     })
 
