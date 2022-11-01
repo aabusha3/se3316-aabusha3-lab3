@@ -69,7 +69,7 @@ genresRoute.route('/:genre_id')
         const indexID = genresArr.findIndex(g => parseInt(g['genre_id']) === parseInt(req.params.genre_id));
         if(indexID < 0) res.status(404).send(`${req.params.genre_id} does not exist`);
         else {
-            res.send(`Removed ${indexID+1}`);
+            res.send(`Removed ${req.params.genre_id}`);
             genresArr.splice(indexID, 1);
         }
     });
