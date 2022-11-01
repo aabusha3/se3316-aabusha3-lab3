@@ -45,9 +45,14 @@ genresRoute.get('/:genre_id', (req, res) => {
     else res.status(404).send(`Genre ID ${req.params.genre_id} was not found`);
 });
 
-// genresRoute.put('/:genre_id', (req, res) => {
-
-// });
+genresRoute.put('/:genre_id', (req, res) => {
+    const newID = req.body;
+    newID.genre_id = parseInt(req.params.genre_id);
+    const indexID = genresArr.findIndex(g => parseInt(g['genre_id']) === parseInt(newID.genre_id));
+    if(indexID < 0) genresArr.push(newID);
+    else genresArr[indexID] = newID;
+    res.send(newID);
+});
 
 
 artistsRoute.get('/s2/:artist_id', (req, res) => {
