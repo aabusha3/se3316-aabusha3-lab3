@@ -9,9 +9,13 @@ const tracksRoute = express.Router();
 
 const genresArr = new Array();
 fs.createReadStream("./lab3-data/genres.csv").pipe(csv()).on('data', (data) => genresArr.push(data));
-const artistsFile = fs.createReadStream("./lab3-data/raw_artists.csv");
-const albumsFile = fs.createReadStream("./lab3-data/raw_albums.csv");
-const tracksFile = fs.createReadStream("./lab3-data/raw_tracks.csv");
+const artistsArr = new Array();
+fs.createReadStream("./lab3-data/raw_artists.csv").pipe(csv()).on('data', (data) => artistsArr.push(data));
+const albumsArr = new Array();
+fs.createReadStream("./lab3-data/raw_albums.csv").pipe(csv()).on('data', (data) => albumsArr.push(data));
+const tracksArr = new Array();
+fs.createReadStream("./lab3-data/raw_tracks.csv").pipe(csv()).on('data', (data) => tracksArr.push(data));
+
 
 app.use('/', express.static('static'));
 app.use('/api/genres', genresRoute);
