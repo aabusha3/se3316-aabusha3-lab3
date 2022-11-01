@@ -40,7 +40,7 @@ genresRoute.get('/s1', (req, res) => {
 
 
 genresRoute.get('/:genre_id', (req, res) => {
-    const id = genresArr.find(i => parseInt(i['genre_id']) === parseInt(req.params.genre_id));
+    const id = genresArr.find(g => parseInt(g['genre_id']) === parseInt(req.params.genre_id));
     if(id) res.send(id);
     else res.status(404).send(`Genre ID ${req.params.genre_id} was not found`);
 });
@@ -50,28 +50,11 @@ genresRoute.get('/:genre_id', (req, res) => {
 // });
 
 
-// artistsRoute.get('/s2/:artist_id', (req, res) => {
-//     console.log('hi1')
-//     artistsFile
-//     .on('error', (err) => {
-//         console.log(err);
-//     })
-
-//     .pipe(csv())
-//     .on('data', (row) => {
-//         console.log('hi2')
-//         if(parseInt(row["artist_id"]) === parseInt(req.params.artist_id)){
-//             console.log('found it')
-//             let str = `Artist ID: ${row["artist_id"]} Date Created: ${row["artist_date_created"]} Handle: ${row["artist_handle"]} Name: ${row["artist_name"]} Tags: ${row["tags"]} Favorites: ${row["artist_favorites"]}.\n`;
-//             res.send(JSON.stringify(str));
-//         }        
-//     })
-
-//     .on('end', () => {
-//         console.log('hi9')
-//         return res.end();
-//     })
-// });
+artistsRoute.get('/s2/:artist_id', (req, res) => {
+    const id = artistsArr.find(r => parseInt(r['artist_id']) === parseInt(req.params.artist_id));
+    if(id) res.send(JSON.stringify({artist_id:id.artist_id, artist_name:id.artist_name, artist_handle:id.artist_handle, tags:id.tags, artist_url:id.artist_url, artist_favorites:id.artist_favorites}));
+    else res.status(404).send(`Artist ID ${req.params.artist_id} was not found`);
+});
 
 const port = process.env.PORT || 3000;
 app.listen(port, () => console.log(`Listening To ${port}`))
