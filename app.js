@@ -40,12 +40,12 @@ genresRoute.route('/')
     });
 
 genresRoute.route('/:genre_id')
-    .get('/:genre_id', (req, res) => {
+    .get((req, res) => {
         const id = genresArr.find(g => parseInt(g['genre_id']) === parseInt(req.params.genre_id));
         if(id) res.send(id);
         else res.status(404).send(`Genre ID ${req.params.genre_id} was not found`);
     })
-    .put('/:genre_id', (req, res) => {
+    .put((req, res) => {
         const newID = req.body;
         newID.genre_id = parseInt(req.params.genre_id);
         const indexID = genresArr.findIndex(g => parseInt(g['genre_id']) === parseInt(newID.genre_id));
@@ -53,7 +53,7 @@ genresRoute.route('/:genre_id')
         else genresArr[indexID] = newID;
         res.send(newID);
     })
-    .post('/:genre_id', (req, res) => {
+    .post((req, res) => {
         const newID = req.body;
         const indexID = genresArr.findIndex(g => parseInt(g['genre_id']) === parseInt(req.params.genre_id));
         if(indexID < 0) res.status(404).send(`Genre ID ${req.params.genre_id} was not found`);
@@ -65,7 +65,7 @@ genresRoute.route('/:genre_id')
             res.send(newID);
         }
     })
-    .delete('/:genre_id', (req, res) => {
+    .delete((req, res) => {
         const indexID = genresArr.findIndex(g => parseInt(g['genre_id']) === parseInt(req.params.genre_id));
         if(indexID < 0) res.status(404).send(`${req.params.genre_id} does not exist`);
         else {
