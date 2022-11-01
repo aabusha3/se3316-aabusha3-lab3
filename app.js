@@ -45,6 +45,7 @@ genresRoute.get('/:genre_id', (req, res) => {
     else res.status(404).send(`Genre ID ${req.params.genre_id} was not found`);
 });
 
+
 genresRoute.put('/:genre_id', (req, res) => {
     const newID = req.body;
     newID.genre_id = parseInt(req.params.genre_id);
@@ -52,6 +53,20 @@ genresRoute.put('/:genre_id', (req, res) => {
     if(indexID < 0) genresArr.push(newID);
     else genresArr[indexID] = newID;
     res.send(newID);
+});
+
+
+genresRoute.post('/:genre_id', (req, res) => {
+    const newID = req.body;
+    const indexID = genresArr.findIndex(g => parseInt(g['genre_id']) === parseInt(req.params.genre_id));
+    if(indexID < 0) res.status(404).send(`Genre ID ${req.params.genre_id} was not found`);
+    else {
+        if(newID['#tracks']) genresArr[indexID]['#tracks'] = parseInt(genresArr[indexID]['#tracks']) + parseInt(newID['#tracks']);
+        if(newID.parent) genresArr[indexID].parent = parseInt(genresArr[indexID].parent) + parseInt(newID.parent);
+        if(newID.title) genresArr[indexID].title += (' ' + newID.title);
+        if(newID.top_level) genresArr[indexID].top_level = parseInt(genresArr[indexID].top_level) + parseInt(newID.top_level);
+        res.send(newID);
+    }
 });
 
 
