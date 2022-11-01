@@ -70,6 +70,16 @@ genresRoute.post('/:genre_id', (req, res) => {
 });
 
 
+genresRoute.delete('/:genre_id', (req, res) => {
+    const indexID = genresArr.findIndex(g => parseInt(g['genre_id']) === parseInt(req.params.genre_id));
+    if(indexID < 0) res.status(404).send(`${genre_id} does not exist`);
+    else {
+        res.send(`Removed ${genresArr[indexID]}`);
+        genresArr.splice(indexID, 1);
+    }
+});
+
+
 artistsRoute.get('/s2/:artist_id', (req, res) => {
     const id = artistsArr.find(r => parseInt(r['artist_id']) === parseInt(req.params.artist_id));
     if(id) res.send(JSON.stringify({artist_id:id.artist_id, artist_name:id.artist_name, artist_handle:id.artist_handle, tags:id.tags, artist_url:id.artist_url, artist_favorites:id.artist_favorites}));
