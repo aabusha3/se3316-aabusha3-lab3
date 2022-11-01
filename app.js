@@ -24,6 +24,9 @@ app.use('/api/albums', albumsRoute);
 app.use('/api/tracks', tracksRoute);
 
 genresRoute.use(express.json());
+artistsRoute.use(express.json());
+albumsRoute.use(express.json());
+tracksRoute.use(express.json());
 
 genresRoute.route('/')
     .get((req, res) => {
