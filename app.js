@@ -75,19 +75,18 @@ genresRoute.route('/:genre_id')
     });
 
 
+//     const s1_genresArr = new Array(); 
+// genresRoute.route('/s1').get((req, res) => {
+//     for(g of genresArr)
+//         s1_genresArr.push({Genre_Names:g.title, Genre:g.genre_id, Parent:g.parent});
+//     res.send(JSON.stringify(s1_genresArr));
+// });
 
-genresRoute.get('/s1', (req, res) => {
-    const s1_genresArr = new Array(); 
-    for(g of genresArr)
-        s1_genresArr.push({Genre_Names:g['title'], Genre_ID:g['genre_id'], Parent_ID:g['parent']});
-    res.send(s1_genresArr);
-});
-
-artistsRoute.get('/s2/:artist_id', (req, res) => {
-    const id = artistsArr.find(r => parseInt(r['artist_id']) === parseInt(req.params.artist_id));
-    if(id) res.send(JSON.stringify({artist_id:id.artist_id, artist_name:id.artist_name, artist_handle:id.artist_handle, tags:id.tags, artist_url:id.artist_url, artist_favorites:id.artist_favorites}));
-    else res.status(404).send(`Artist ID ${req.params.artist_id} was not found`);
-});
+// artistsRoute.get('/s2/:artist_id', (req, res) => {
+//     const id = artistsArr.find(r => parseInt(r['artist_id']) === parseInt(req.params.artist_id));
+//     if(id) res.send(JSON.stringify({artist_id:id.artist_id, artist_name:id.artist_name, artist_handle:id.artist_handle, tags:id.tags, artist_url:id.artist_url, artist_favorites:id.artist_favorites}));
+//     else res.status(404).send(`Artist ID ${req.params.artist_id} was not found`);
+// });
 
 const port = process.env.PORT || 3000;
 app.listen(port, () => console.log(`Listening To ${port}`))
