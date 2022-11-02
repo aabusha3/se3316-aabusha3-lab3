@@ -10,18 +10,25 @@ function step1(){
                 li.appendChild(document.createTextNode(`Name: ${d.title} ID: ${d.genre_id} Parent: ${d.parent}`))
                 ul.appendChild(li);
             });
-    }));
+            document.getElementById('step1Status').innerText = 'Genres Displayed Succesufully';
+    }))
+    .catch(err => document.getElementById('step1Status').innerText = `Genres List Could Not Be Found\n${err}`);
 }
 
 document.getElementById('step2').addEventListener('click', step2);
 function step2(){
-    fetch(`/api/artists/${document.getElementById('id_step2').value}`)
+    const id = parseInt(document.getElementById('id_step2').value);
+    fetch(`/api/artists/${id}`)
     .then(res => res.json()
         .then(d => {
             const li = document.getElementById('step2Result');
             li.innerHTML = '';
             li.appendChild(document.createTextNode(`ID: ${d.artist_id} Name: ${d.artist_name} Handle: ${d.artist_handle} Tags: ${d.tags} URL: ${d.artist_url} Favorites: ${d.artist_favorites} Comments: ${d.artist_comments} Date Created: ${d.artist_date_created}`))
-    }));
+            document.getElementById('step2Status').innerText = `Artist ${id} Found`;
+        })
+        .catch(err => document.getElementById('step2Status').innerText = `Artist ${id} Not Found\n${err}`)
+    )
+    .catch(err => document.getElementById('step2Status').innerText = `Artists List Could Not Be Found\n${err}`)
 }
 
 // artistsRoute.get('/s2/:artist_id', (req, res) => {
