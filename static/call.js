@@ -1,12 +1,13 @@
-document.getElementById('step1').addEventListener('click', step1);
 document.getElementById('step1_alt').addEventListener('click', step1Clear);
 function step1Clear(){
     const ul = document.getElementById('step1Result');
     while(ul.firstChild) ul.removeChild(ul.firstChild);
     document.getElementById('step1Status').innerText = 'Genres Cleared Succesufully';
 }
+document.getElementById('step1').addEventListener('click', step1);
 function step1(){
     document.getElementById('step1Status').innerText = '';
+    
     fetch('/api/genres')
     .then(res => res.json()
         .then(data => {
@@ -25,18 +26,19 @@ function step1(){
 }
 
 
-document.getElementById('step2').addEventListener('click', step2);
 document.getElementById('step2_alt').addEventListener('click', step2Clear);
 function step2Clear(){
     const li = document.getElementById('step2Result');
     li.innerHTML = '';
     document.getElementById('step2Status').innerText = "Artist's Info Cleared Succesufully";
 }
+document.getElementById('step2').addEventListener('click', step2);
 function step2(){
     const id = parseInt(document.getElementById('id_step2').value);
     const li = document.getElementById('step2Result');
     document.getElementById('step2Status').innerText = '';
     li.innerHTML = '';
+
     fetch(`/api/artists/${id}`)
     .then(res => res.json()
         .then(d => {
@@ -63,6 +65,7 @@ function step3(){
     const li = document.getElementById('step3Result');
     document.getElementById('step3Status').innerText = '';
     li.innerHTML = '';
+
     fetch(`/api/tracks/${id}`)
     .then(res => res.json()
         .then(d => {
@@ -111,4 +114,35 @@ function step4(){
         .catch(err => document.getElementById('step4Status').innerText = `Tracks List Data Not Found\t${err}`)
     )
     .catch(err => document.getElementById('step4Status').innerText = `Tracks List Could Not Be Found\t${err}`);
+}
+
+
+document.getElementById('step5_alt').addEventListener('click', step5Clear);
+function step5Clear(){
+    const ul = document.getElementById('step5Result');
+    while(ul.firstChild) ul.removeChild(ul.firstChild);
+    document.getElementById('step5Status').innerText = 'Filetered Artist Ids Cleared Succesufully';
+}
+document.getElementById('step5').addEventListener('click', step5);
+function step5(){
+    const name = document.getElementById('name_step5').value.toLowerCase();
+    const ul = document.getElementById('step5Result');
+    while(ul.firstChild) ul.removeChild(ul.firstChild);
+    document.getElementById('step5Status').innerText = 'Searching The Archives, Please Be Patient';
+
+    fetch(`/api/artists`)
+    .then(res => res.json()
+        .then(data => {
+            data.forEach(d => {
+                if(name.length>0 && d.artist_name.toLowerCase().includes(name)){
+                    const li = document.createElement('li');
+                    li.appendChild(document.createTextNode(`Artist ID: ${d.artist_id}`))
+                    ul.appendChild(li);
+                }
+            });
+            document.getElementById('step5Status').innerText = 'Artist IDs Displayed Succesufully';
+        })
+        .catch(err => document.getElementById('step5Status').innerText = `Artists List Data Not Found\t${err}`)
+    )
+    .catch(err => document.getElementById('step5Status').innerText = `Artists List Could Not Be Found\t${err}`);
 }
