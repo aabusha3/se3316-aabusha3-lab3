@@ -26,10 +26,16 @@ function step1(){
 
 
 document.getElementById('step2').addEventListener('click', step2);
+document.getElementById('step2_alt').addEventListener('click', step2Clear);
+function step2Clear(){
+    const li = document.getElementById('step2Result');
+    li.innerHTML = '';
+    document.getElementById('step2Status').innerText = "Artist's Info Cleared Succesufully";
+}
 function step2(){
     const id = parseInt(document.getElementById('id_step2').value);
     const li = document.getElementById('step2Result');
-    document.getElementById('step3Status').innerText = '';
+    document.getElementById('step2Status').innerText = '';
     li.innerHTML = '';
     fetch(`/api/artists/${id}`)
     .then(res => res.json()
@@ -45,6 +51,12 @@ function step2(){
 }
 
 
+document.getElementById('step3_alt').addEventListener('click', step3Clear);
+function step3Clear(){
+    const li = document.getElementById('step3Result');
+    li.innerHTML = '';
+    document.getElementById('step3Status').innerText = "Track's Info Cleared Succesufully";
+}
 document.getElementById('step3').addEventListener('click', step3);
 function step3(){
     const id = parseInt(document.getElementById('id_step3').value);
@@ -67,6 +79,12 @@ function step3(){
 }
 
 
+document.getElementById('step4_alt').addEventListener('click', step4Clear);
+function step4Clear(){
+    const ul = document.getElementById('step4Result');
+    while(ul.firstChild) ul.removeChild(ul.firstChild);
+    document.getElementById('step4Status').innerText = 'Filetered Track Ids Cleared Succesufully';
+}
 document.getElementById('step4').addEventListener('click', step4);
 function step4(){
     let max = 12;
