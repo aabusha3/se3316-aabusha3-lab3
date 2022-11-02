@@ -79,6 +79,7 @@ genresRoute.route('/:genre_id')
     });
 
 
+    
 artistsRoute.route('/')
     .get((req, res) => {
     res.send(artistsArr);
@@ -134,18 +135,122 @@ artistsRoute.route('/:artist_id')
     });
 
 
-//     const s1_genresArr = new Array(); 
-// genresRoute.route('/s1').get((req, res) => {
-//     for(g of genresArr)
-//         s1_genresArr.push({Genre_Names:g.title, Genre:g.genre_id, Parent:g.parent});
-//     res.send(JSON.stringify(s1_genresArr));
-// });
 
-// artistsRoute.get('/s2/:artist_id', (req, res) => {
-//     const id = artistsArr.find(r => parseInt(r['artist_id']) === parseInt(req.params.artist_id));
-//     if(id) res.send(JSON.stringify({artist_id:id.artist_id, artist_name:id.artist_name, artist_handle:id.artist_handle, tags:id.tags, artist_url:id.artist_url, artist_favorites:id.artist_favorites}));
-//     else res.status(404).send(`Artist ID ${req.params.artist_id} was not found`);
-// });
+albumsRoute.route('/')
+    .get((req, res) => {
+    res.send(albumsArr);
+    })
+    .post((req, res) => {
+        const newID = req.body;
+        newID.album_id = albumsArr.length+1;
+        if(!(newID.album_title && newID.album_date_created && newID.album_favorites && newID.artist_name 
+            && newID.artist_url && newID.artist_favorites  && newID.tags)) 
+            res.status(404).send('please make sure all parts of the album are present in your request');
+        else {
+            albumsArr[parseInt(newID.album_id)] = newID;
+            res.send(newID);
+        }
+    });
+
+albumsRoute.route('/:album_id')
+    .get((req, res) => {
+        const id = albumsArr.find(l => parseInt(l.album_id) === parseInt(req.params.album_id));
+        if(id) res.send(id);
+        else res.status(404).send(`Album ID ${req.params.album_id} was not found`);
+    })
+    .put((req, res) => {
+        const newID = req.body;
+        newID.album_id = parseInt(req.params.album_id);
+        const indexID = albumsArr.findIndex(l => parseInt(l.album_id) === parseInt(newID.album_id));
+        if(indexID < 0) albumsArr.push(newID);
+        else albumsArr[indexID] = newID;
+        res.send(newID);
+    })
+    .post((req, res) => {
+        const newID = req.body;
+        const indexID = albumsArr.findIndex(l => parseInt(l.album_id) === parseInt(req.params.album_id));
+        if(indexID < 0) res.status(404).send(`Album ID ${req.params.album_id} was not found`);
+        else {
+            if(newID.album_title) albumsArr[indexID].album_title += (' ' + newID.album_title);
+            if(newID.album_date_created) albumsArr[indexID].album_date_created = newID.album_date_created;
+            if(newID.album_favorites) albumsArr[indexID].album_favorites = parseInt(albumsArr[indexID].album_favorites) + parseInt(newID.album_favorites);
+            if(newID.artist_name) albumsArr[indexID].artist_name += (' ' + newID.artist_name);
+            if(newID.artist_url) albumsArr[indexID].artist_url += (' ' + newID.artist_url);
+            if(newID.artist_favorites) albumsArr[indexID].artist_favorites = parseInt(albumsArr[indexID].artist_favorites) + parseInt(newID.artist_favorites);
+            if(newID.tags) albumsArr[indexID].tags += (' ' + newID.tags);
+            res.send(newID);
+        }
+    })
+    .delete((req, res) => {
+        const indexID = albumsArr.findIndex(l => parseInt(l.album_id) === parseInt(req.params.album_id));
+        if(indexID < 0) res.status(404).send(`Album ID ${req.params.album_id} does not exist`);
+        else {
+            res.send(`Removed Album ID ${req.params.album_id}`);
+            albumsArr.splice(indexID, 1);
+        }
+    });
+    
+
+ 
+tracksRoute.route('/')
+    .get((req, res) => {
+    res.send(tracksArr);
+    })
+    .post((req, res) => {
+        const newID = req.body;
+        newID.track_id = tracksArr.length+1;
+        if(!(newID.album_id && newID.album_title && newID.artist_id && newID.artist_name && newID.tags
+            && newID.track_date_created && newID.track_date_recorded && newID.track_duration 
+            && newID.track_genres && newID.track_number && newID.track_title)) 
+            res.status(404).send('please make sure all parts of the tracks are present in your request');
+        else {
+            tracksArr[parseInt(newID.track_id)] = newID;
+            res.send(newID);
+        }
+    });
+  
+tracksRoute.route('/:track_id')
+    .get((req, res) => {
+        const id = tracksArr.find(t => parseInt(t.track_id) === parseInt(req.params.track_id));
+        if(id) res.send(id);
+        else res.status(404).send(`Tracks ID ${req.params.track_id} was not found`);
+    })
+    .put((req, res) => {
+        const newID = req.body;
+        newID.track_id = parseInt(req.params.track_id);
+        const indexID = tracksArr.findIndex(t => parseInt(t.track_id) === parseInt(newID.track_id));
+        if(indexID < 0) tracksArr.push(newID);
+        else tracksArr[indexID] = newID;
+        res.send(newID);
+    })
+    .post((req, res) => {
+        const newID = req.body;
+        const indexID = tracksArr.findIndex(t => parseInt(t.track_id) === parseInt(req.params.track_id));
+        if(indexID < 0) res.status(404).send(`Tracks ID ${req.params.track_id} was not found`);
+        else {
+            if(newID.album_id) tracksArr[indexID].album_id = parseInt(tracksArr[indexID].album_id) + parseInt(newID.album_id);
+            if(newID.album_title) tracksArr[indexID].album_title += (' ' + newID.album_title);
+            if(newID.artist_id) tracksArr[indexID].artist_id = parseInt(tracksArr[indexID].artist_id) + parseInt(newID.artist_id);
+            if(newID.artist_name) tracksArr[indexID].artist_name += (' ' + newID.artist_name);
+            if(newID.tags) tracksArr[indexID].tags += (' ' + newID.tags);
+            if(newID.track_date_created) tracksArr[indexID].track_date_created = newID.track_date_created;
+            if(newID.track_date_recorded) tracksArr[indexID].track_date_recorded = newID.track_date_recorded;
+            if(newID.track_duration) tracksArr[indexID].track_duration = parseInt(tracksArr[indexID].track_duration) + parseInt(newID.track_duration);
+            if(newID.track_genres) tracksArr[indexID].track_genres += (' ' + newID.track_genres);
+            if(newID.track_number) tracksArr[indexID].track_number = parseInt(tracksArr[indexID].track_number) + parseInt(newID.track_number);
+            if(newID.track_title) tracksArr[indexID].track_title += (' ' + newID.track_title);
+            res.send(newID);
+        }
+    })
+    .delete((req, res) => {
+        const indexID = tracksArr.findIndex(t => parseInt(t.track_id) === parseInt(req.params.track_id));
+        if(indexID < 0) res.status(404).send(`Tracks ID ${req.params.track_id} does not exist`);
+        else {
+            res.send(`Removed Tracks ID ${req.params.track_id}`);
+            tracksArr.splice(indexID, 1);
+        }
+    });
+
 
 const port = process.env.PORT || 3000;
 app.listen(port, () => console.log(`Listening To ${port}`))
