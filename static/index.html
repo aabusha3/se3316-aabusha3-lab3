@@ -10,11 +10,13 @@
 <body>
 <h1>Music API</h1>
 <div>
-    <h2>All genres</h2>
+    <h2>Display All genres</h2>
     <button id="step1">Get All Genres</button>
+    <button id="step1_alt">Clear Display</button>
     <span id="step1Status"></span>
     <ul id="step1Result"></ul>
 </div>
+
 <div>
     <h2>Select Artist Info</h2>
     <span>
@@ -25,6 +27,7 @@
         <li id="step2Result"></li>
     </span>
 </div>
+
 <div>
     <h2>Select Track Info</h2>
     <span>
@@ -35,6 +38,19 @@
         <li id="step3Result"></li>
     </span>
 </div>
+
+<div>
+    <h2>Matching Track IDs</h2>
+    <span>
+        Track Title: <input type="text" id="tt_step4">
+        Album Title: <input type="text" id="at_step4">
+        <button id="step4">Get Matching Track ID</button>
+        <span id="step4Status"></span>
+        <br>
+        <ul id="step4Result"></ul>
+    </span>
+</div>
+
 <script defer src="call.js"></script>
 </body>
 </html>
