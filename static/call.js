@@ -15,6 +15,7 @@ function step1(){
     .catch(err => document.getElementById('step1Status').innerText = `Genres List Could Not Be Found\t${err}`);
 }
 
+
 document.getElementById('step2').addEventListener('click', step2);
 function step2(){
     const id = parseInt(document.getElementById('id_step2').value);
@@ -26,15 +27,28 @@ function step2(){
             li.appendChild(document.createTextNode(`ID: ${d.artist_id} Name: ${d.artist_name} Handle: ${d.artist_handle} Tags: ${d.tags} URL: ${d.artist_url} Favorites: ${d.artist_favorites} Comments: ${d.artist_comments} Date Created: ${d.artist_date_created}`))
             document.getElementById('step2Status').innerText = `Artist ${id} Found`;
         })
-        .catch(err => document.getElementById('step2Status').innerText = `Artist ${id} Not Found\n${err}`)
+        .catch(err => document.getElementById('step2Status').innerText = `Artist ${id} Not Found\t${err}`)
     )
-    .catch(err => document.getElementById('step2Status').innerText = `Artists List Could Not Be Found\t${err}`)
+    .catch(err => document.getElementById('step2Status').innerText = `Artists List Could Not Be Found\t${err}`);
 }
 
-// artistsRoute.get('/s2/:artist_id', (req, res) => {
-//     const id = artistsArr.find(r => parseInt(r['artist_id']) === parseInt(req.params.artist_id));
-//     if(id) res.send(JSON.stringify({artist_id:id.artist_id, artist_name:id.artist_name, 
-//          artist_handle:id.artist_handle, tags:id.tags, artist_url:id.artist_url, 
-//          artist_favorites:id.artist_favorites}));
-//     else res.status(404).send(`Artist ID ${req.params.artist_id} was not found`);
-// });
+
+document.getElementById('step3').addEventListener('click', step3);
+function step3(){
+    const id = parseInt(document.getElementById('id_step3').value);
+    const li = document.getElementById('step3Result');
+    li.innerHTML = '';
+    fetch(`/api/tracks/${id}`)
+    .then(res => res.json()
+        .then(d => {
+            li.appendChild(document.createTextNode(`Album ID: ${d.album_id} Album Title: ${d.album_title} 
+            Artist ID: ${d.artist_id} Artist Name: ${d.artist_name} Tags: ${d.tags} 
+            Date Created: ${d.track_date_created} Date Recorded: ${d.track_date_recorded} 
+            Duration: ${d.track_duration} Genres: ${d.track_genres} Track#: ${d.track_number} 
+            Track Title: ${d.track_title}`))
+            document.getElementById('step3Status').innerText = `Track ${id} Found`;
+        })
+        .catch(err => document.getElementById('step3Status').innerText = `Track ${id} Not Found\t${err}`)
+    )
+    .catch(err => document.getElementById('step3Status').innerText = `Tracks List Could Not Be Found\t${err}`);
+}
