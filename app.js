@@ -34,7 +34,7 @@ genresRoute.route('/')
     })
     .post((req, res) => {
         const newID = req.body;
-        newID.genre_id = genresArr.length+1;
+        newID.genre_id = Math.max(...genresArr.genre_id)+1;
         if(!(newID['#tracks'] && newID.parent && newID.title && newID.top_level)) 
             res.status(404).send('please make sure all parts of the genre are present in your request');
         else {
@@ -86,7 +86,7 @@ artistsRoute.route('/')
     })
     .post((req, res) => {
         const newID = req.body;
-        newID.artist_id = artistsArr.length+1;
+        newID.artist_id = Math.max(...artistsArr.artist_id)+1;
         if(!(newID.artist_name && newID.artist_handle && newID.tags && newID.artist_url 
             && newID.artist_favorites && newID.artist_comments  && newID.artist_date_created)) 
             res.status(404).send('please make sure all parts of the artist are present in your request');
@@ -142,7 +142,7 @@ albumsRoute.route('/')
     })
     .post((req, res) => {
         const newID = req.body;
-        newID.album_id = albumsArr.length+1;
+        newID.album_id = Math.max(...albumsArr.album_id)+1;
         if(!(newID.album_title && newID.album_date_created && newID.album_favorites && newID.artist_name 
             && newID.artist_url && newID.artist_favorites  && newID.tags)) 
             res.status(404).send('please make sure all parts of the album are present in your request');
@@ -198,7 +198,7 @@ tracksRoute.route('/')
     })
     .post((req, res) => {
         const newID = req.body;
-        newID.track_id = tracksArr.length+1;
+        newID.track_id = Math.max(...tracksArr.track_id)+1;
         if(!(newID.album_id && newID.album_title && newID.artist_id && newID.artist_name && newID.tags
             && newID.track_date_created && newID.track_date_recorded && newID.track_duration 
             && newID.track_genres && newID.track_number && newID.track_title)) 
