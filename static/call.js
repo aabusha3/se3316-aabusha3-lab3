@@ -227,3 +227,33 @@ function step8(){
     )
     .catch(err => status.innerText = `List Could Not Be Found\t${err}`);
 }
+
+
+
+document.getElementById('step10_alt').addEventListener('click', step10Clear);
+function step10Clear(){
+    const ul = document.getElementById('step10Result');
+    while(ul.firstChild) ul.removeChild(ul.firstChild);
+    document.getElementById('step10Status').innerText = 'Genres Cleared Successfully';
+}
+document.getElementById('step10').addEventListener('click', step10);
+function step10(){
+    const status = document.getElementById('step10Status');
+    const ul = document.getElementById('step10Result');
+    while(ul.firstChild) ul.removeChild(ul.firstChild);
+    status.innerText = '';
+
+    fetch('/api/lists/list')
+    .then(res => res.json()
+        .then(data => {
+            data.forEach(d => {
+                const li = document.createElement('li');
+                li.appendChild(document.createTextNode(`Name: ${d.name} ID Count: ${d.length} Duration: ${d.duration}`))
+                ul.appendChild(li);
+            });
+            status.innerText = 'Lists Displayed Successfully';
+        })
+        .catch(err => status.innerText = `Lists Data Not Found\t${err}`)
+    )
+    .catch(err => status.innerText = `Lists Could Not Be Found\t${err}`);
+}

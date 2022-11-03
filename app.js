@@ -337,19 +337,48 @@ listsRoute.route('/delete/:name')
 
 listsRoute.route('/list')
     .get((req, res) => {
-        const path = `./StoredLists/${req.params.name}.json`
-        fs.access(path, fs.F_OK, (err) => {
-            if(err) return res.status(404).send(JSON.stringify(`List '${req.params.name}' Does Not Exist`));
+        const dir = './StoredLists/'
+        fs.readdir(dir, (err, files) => {
+            if(err) return res.status(404).send(JSON.stringify('Lists Could Not Be Read Or Do Not Exist'));
             else{
-                fs.unlink(path, function(errr) {
-                    if (errr) return res.status(404).send(JSON.stringify(`List '${req.params.name}' Could Not Be Deleted`));
-                    else return res.send(JSON.stringify(`List '${req.params.name}' Successfully Deleted`));
-                });
+                let resData = [];
+                let index = 0;
+                for(file of files){
+                    let totalTime = 0;
+                    if(res.status === 404) break;
+                    let path = `./StoredLists/${file}`
+                    fs.readFile(path, function(errr, data) {
+                        let name = path.replace('./StoredLists/','').replace('.json','');
+                        if (errr) return res.status(404).send(JSON.stringify(`List '${name}' Could Not Be Read`));
+                        else {
+                            resData[index] = {};
+                            resData[index]['name'] = name;
+                            if(data.length>0) {
+                                data = JSON.parse(data);
+                                resData[index]['length'] = data.length;
+                                data.forEach(d => totalTime += parseInt((d.track_duration).split(':')[0])*60 + parseInt((d.track_duration).split(':')[1]));
+                                resData[index]['duration'] = '' + (parseInt(totalTime/60)) + ':' + (parseInt(totalTime%60) !== 0? parseInt(totalTime%60) : '00');
+                            }
+                            else {
+                                resData[index]['length'] = 0;
+                                resData[index]['duration'] = '0:00';
+                            }
+                        }
+                        if(res.status !== 404 && files.length === resData.length)
+                            res.send(JSON.stringify(resData));
+                        index++;
+                    });
+                }
             }
         });
     });
 
-
+function timeToNum(time){
+    return parseInt(time.split(':')[0])*60 + parseInt(time.split(':')[1]);
+}
+function numToTime(num){
+    return '' + (parseInt(num/60)) + ':' + (parseInt(num%60) !== 0? parseInt(num%60) : '00');
+}
 const port = process.env.PORT || 3000;
 app.listen(port, () => console.log(`Listening To ${port}`))
 
