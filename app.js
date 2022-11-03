@@ -317,7 +317,20 @@ listsRoute.route('/read/:name')
                 });
             }
         });
+    });
 
+listsRoute.route('/delete/:name')
+    .get((req, res) => {
+        const path = `./StoredLists/${req.params.name}.json`
+        fs.access(path, fs.F_OK, (err) => {
+            if(err) return res.status(404).send(JSON.stringify(`List '${req.params.name}' Does Not Exist`));
+            else{
+                fs.unlink(path, function(errr) {
+                    if (errr) return res.status(404).send(JSON.stringify(`List '${req.params.name}' Could Not Be Deleted`));
+                    else return res.send(JSON.stringify(`List '${req.params.name}' Successfully Deleted`));
+                });
+            }
+        });
     });
 
 

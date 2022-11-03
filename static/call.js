@@ -155,11 +155,24 @@ function step5(){
 
 document.getElementById('step6').addEventListener('click', step6);
 function step6(){
-    const status = document.getElementById('step6Status');
+    const status = document.getElementById('step69Status');
     const name = document.getElementById('name_step6').value;
     status.innerText = '';
 
     fetch(`/api/lists/create/${name}`)
+    .then(res => res.json()
+        .then(data => {
+            status.innerText = data;
+    }));
+}
+
+document.getElementById('step9').addEventListener('click', step9);
+function step9(){
+    const status = document.getElementById('step69Status');
+    const name = document.getElementById('name_step6').value;
+    status.innerText = '';
+
+    fetch(`/api/lists/delete/${name}`)
     .then(res => res.json()
         .then(data => {
             status.innerText = data;
