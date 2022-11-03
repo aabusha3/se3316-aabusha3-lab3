@@ -290,7 +290,9 @@ listsRoute.route('/write/:name/:id')
                                 }
                             }
                             if(!exst){
-                                writeData = data.length>0? (data.concat([{'track_id':`${req.params.id}`}])) : ([{'track_id':`${req.params.id}`}]);
+                                writeData = data.length>0? 
+                                (data.concat([{'track_id':`${req.params.id}`, 'track_duration':tracksArr[indexID].track_duration}])) 
+                                : ([{'track_id':`${req.params.id}`, 'track_duration':tracksArr[indexID].track_duration}]);
                                 fs.writeFile(path, JSON.stringify(writeData), function (errr) {
                                     if (errr) return res.status(404).send(JSON.stringify(`Track Id '${req.params.id}' Could Not Be Added`));
                                     else return res.send(JSON.stringify(`Track Id '${req.params.id}' Successfully Added`));
@@ -320,6 +322,20 @@ listsRoute.route('/read/:name')
     });
 
 listsRoute.route('/delete/:name')
+    .get((req, res) => {
+        const path = `./StoredLists/${req.params.name}.json`
+        fs.access(path, fs.F_OK, (err) => {
+            if(err) return res.status(404).send(JSON.stringify(`List '${req.params.name}' Does Not Exist`));
+            else{
+                fs.unlink(path, function(errr) {
+                    if (errr) return res.status(404).send(JSON.stringify(`List '${req.params.name}' Could Not Be Deleted`));
+                    else return res.send(JSON.stringify(`List '${req.params.name}' Successfully Deleted`));
+                });
+            }
+        });
+    });
+
+listsRoute.route('/list')
     .get((req, res) => {
         const path = `./StoredLists/${req.params.name}.json`
         fs.access(path, fs.F_OK, (err) => {
