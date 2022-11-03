@@ -7,13 +7,13 @@ function step1Clear(){
 document.getElementById('step1').addEventListener('click', step1);
 function step1(){
     const status = document.getElementById('step1Status');
+    const ul = document.getElementById('step1Result');
+    while(ul.firstChild) ul.removeChild(ul.firstChild);
     status.innerText = '';
 
     fetch('/api/genres')
     .then(res => res.json()
         .then(data => {
-            const ul = document.getElementById('step1Result');
-            while(ul.firstChild) ul.removeChild(ul.firstChild);
             data.forEach(d => {
                 const li = document.createElement('li');
                 li.appendChild(document.createTextNode(`Name: ${d.title} ID: ${d.genre_id} Parent: ${d.parent}`))
@@ -159,7 +159,7 @@ function step6(){
     const name = document.getElementById('name_step6').value;
     status.innerText = '';
 
-    fetch(`/api/lists/${name}`)
+    fetch(`/api/lists/create/${name}`)
     .then(res => res.json()
         .then(data => {
             status.innerText = data;
@@ -174,9 +174,43 @@ function step7(){
     const id = document.getElementById('id_step7').value;
     status.innerText = '';
 
-    fetch(`/api/lists/${name}/${id}`)
+    fetch(`/api/lists/write/${name}/${id}`)
     .then(res => res.json()
         .then(data => {
             status.innerText = data;
     }));
+}
+
+
+document.getElementById('step8_alt').addEventListener('click', step8Clear);
+function step8Clear(){
+    const ul = document.getElementById('step8Result');
+    while(ul.firstChild) ul.removeChild(ul.firstChild);
+    document.getElementById('step8Status').innerText = 'List Cleared Successfully';
+}
+document.getElementById('step8').addEventListener('click', step8);
+function step8(){
+    const status = document.getElementById('step8Status');
+    const name = document.getElementById('name_step8').value;
+    const ul = document.getElementById('step8Result');
+    while(ul.firstChild) ul.removeChild(ul.firstChild);
+    
+    fetch(`/api/lists/read/${name}`)
+    .then(res => res.json()
+        .then(data => {
+            if(res.status === 200){
+                data.forEach(d => {
+                    const li = document.createElement('li');
+                    li.appendChild(document.createTextNode(`Track ID: ${d.track_id}`))
+                    ul.appendChild(li);
+                });
+                status.innerText = 'Ids In List Displayed Successfully';
+            }
+            else if(res.status === 404){
+                status.innerText = data;
+            }
+        })
+        .catch(err => status.innerText = `List Data Not Found\t${err}`)
+    )
+    .catch(err => status.innerText = `List Could Not Be Found\t${err}`);
 }

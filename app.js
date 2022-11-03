@@ -255,7 +255,7 @@ tracksRoute.route('/:track_id')
     });
 
     
-listsRoute.route('/:name')
+listsRoute.route('/create/:name')
     .get((req, res) => {
         const path = `./StoredLists/${req.params.name}.json`
         fs.access(path, fs.F_OK, (err) => {
@@ -269,7 +269,7 @@ listsRoute.route('/:name')
         });
     });
 
-listsRoute.route('/:name/:id')
+listsRoute.route('/write/:name/:id')
     .get((req, res) => {
         const path = `./StoredLists/${req.params.name}.json`
         const indexID = tracksArr.findIndex(t => parseInt(t.track_id) === parseInt(req.params.id));
@@ -304,6 +304,22 @@ listsRoute.route('/:name/:id')
         }
         else return res.status(404).send(JSON.stringify(`Tracks ID '${req.params.id}' Does Not Exist In The Track File`));
     });
+
+listsRoute.route('/read/:name')
+    .get((req, res) => {
+        const path = `./StoredLists/${req.params.name}.json`
+        fs.access(path, fs.F_OK, (err) => {
+            if(err) return res.status(404).send(JSON.stringify(`List '${req.params.name}' Does Not Exist`));
+            else{
+                fs.readFile(path, function(errr, data) {
+                    if (errr) return res.status(404).send(JSON.stringify(`List '${req.params.name}' Could Not Be Read`));
+                    else res.send(data);
+                });
+            }
+        });
+
+    });
+
 
 const port = process.env.PORT || 3000;
 app.listen(port, () => console.log(`Listening To ${port}`))
