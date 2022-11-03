@@ -269,6 +269,27 @@ listsRoute.route('/:name')
         });
     });
 
+listsRoute.route('/:name/:id')
+    .get((req, res) => {
+        const path = `./StoredLists/${req.params.name}.json`
+        fs.access(path, fs.F_OK, (err) => {
+            if (err) return res.status(404).send(JSON.stringify(`List '${req.params.name}' Does Not Exist`));
+            else {
+                let Data = [];
+                fs.readFile(path, function(err, data) {
+                    if (err) return res.status(404).send(JSON.stringify(`List '${req.params.name}' Could Not Be Read`));
+                    else {
+                        Data = data.length>0? (JSON.parse(data).concat([{'track_id':`${req.params.id}`}])) : ([{'track_id':`${req.params.id}`}]);
+                        fs.writeFile(path, JSON.stringify(Data), function (errr) {
+                            if (errr) return res.status(404).send(JSON.stringify(`Track Id '${req.params.id}' Could Not Be Added`));
+                            else return res.send(JSON.stringify(`Track Id '${req.params.id}' Successfully Added`));
+                        });
+                    }
+                });
+            }
+        });
+    });
+
 const port = process.env.PORT || 3000;
 app.listen(port, () => console.log(`Listening To ${port}`))
 
