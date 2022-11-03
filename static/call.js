@@ -157,9 +157,24 @@ document.getElementById('step6').addEventListener('click', step6);
 function step6(){
     const status = document.getElementById('step6Status');
     const name = document.getElementById('name_step6').value;
-    status.innerText = 'Searching The Archives, Please Be Patient';
+    status.innerText = '';
 
     fetch(`/api/lists/${name}`)
+    .then(res => res.json()
+        .then(data => {
+            status.innerText = data;
+    }));
+}
+
+
+document.getElementById('step7').addEventListener('click', step7);
+function step7(){
+    const status = document.getElementById('step7Status');
+    const name = document.getElementById('name_step7').value;
+    const id = document.getElementById('id_step7').value;
+    status.innerText = '';
+
+    fetch(`/api/lists/${name}/${id}`)
     .then(res => res.json()
         .then(data => {
             status.innerText = data;
