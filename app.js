@@ -272,22 +272,37 @@ listsRoute.route('/:name')
 listsRoute.route('/:name/:id')
     .get((req, res) => {
         const path = `./StoredLists/${req.params.name}.json`
-        fs.access(path, fs.F_OK, (err) => {
-            if (err) return res.status(404).send(JSON.stringify(`List '${req.params.name}' Does Not Exist`));
-            else {
-                let Data = [];
-                fs.readFile(path, function(err, data) {
-                    if (err) return res.status(404).send(JSON.stringify(`List '${req.params.name}' Could Not Be Read`));
-                    else {
-                        Data = data.length>0? (JSON.parse(data).concat([{'track_id':`${req.params.id}`}])) : ([{'track_id':`${req.params.id}`}]);
-                        fs.writeFile(path, JSON.stringify(Data), function (errr) {
-                            if (errr) return res.status(404).send(JSON.stringify(`Track Id '${req.params.id}' Could Not Be Added`));
-                            else return res.send(JSON.stringify(`Track Id '${req.params.id}' Successfully Added`));
-                        });
-                    }
-                });
-            }
-        });
+        const indexID = tracksArr.findIndex(t => parseInt(t.track_id) === parseInt(req.params.id));
+        if(indexID >= 0){
+            fs.access(path, fs.F_OK, (err) => {
+                if (err) return res.status(404).send(JSON.stringify(`List '${req.params.name}' Does Not Exist`));
+                else {
+                    let writeData = [];
+                    fs.readFile(path, function(err, data) {
+                        if (err) return res.status(404).send(JSON.stringify(`List '${req.params.name}' Could Not Be Read`));
+                        else {
+                            let exst = false;
+                            if(data.length>0) data = JSON.parse(data);
+                            for(d of data){
+                                if(parseInt(d.track_id) === parseInt(req.params.id)){
+                                    exst = true;
+                                    break;
+                                }
+                            }
+                            if(!exst){
+                                writeData = data.length>0? (data.concat([{'track_id':`${req.params.id}`}])) : ([{'track_id':`${req.params.id}`}]);
+                                fs.writeFile(path, JSON.stringify(writeData), function (errr) {
+                                    if (errr) return res.status(404).send(JSON.stringify(`Track Id '${req.params.id}' Could Not Be Added`));
+                                    else return res.send(JSON.stringify(`Track Id '${req.params.id}' Successfully Added`));
+                                });
+                            }
+                            else return res.status(404).send(JSON.stringify(`Tracks ID '${req.params.id}' Is Already In Your List`));
+                        }
+                    });
+                }
+            });
+        }
+        else return res.status(404).send(JSON.stringify(`Tracks ID '${req.params.id}' Does Not Exist In The Track File`));
     });
 
 const port = process.env.PORT || 3000;
