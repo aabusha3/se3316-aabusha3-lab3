@@ -1,3 +1,8 @@
+function strip(html){
+    let doc = new DOMParser().parseFromString(html, 'text/html');
+    return doc.body.textContent || "";
+}
+
 document.getElementById('step1_alt').addEventListener('click', step1Clear);
 function step1Clear(){
     const ul = document.getElementById('step1Result');
@@ -95,8 +100,8 @@ document.getElementById('step4').addEventListener('click', step4);
 function step4(){
     let max = 12;
     const status = document.getElementById('step4Status');
-    const tt = document.getElementById('tt_step4').value.toLowerCase();
-    const at = document.getElementById('at_step4').value.toLowerCase();
+    const tt = strip(document.getElementById('tt_step4').value).toLowerCase();
+    const at = strip(document.getElementById('at_step4').value).toLowerCase();
     const ul = document.getElementById('step4Result');
     while(ul.firstChild) ul.removeChild(ul.firstChild);
     status.innerText = 'Searching The Archives, Please Be Patient';
@@ -130,7 +135,7 @@ function step5Clear(){
 document.getElementById('step5').addEventListener('click', step5);
 function step5(){
     const status = document.getElementById('step5Status');
-    const name = document.getElementById('name_step5').value.toLowerCase();
+    const name = strip(document.getElementById('name_step5').value).toLowerCase();
     const ul = document.getElementById('step5Result');
     while(ul.firstChild) ul.removeChild(ul.firstChild);
     status.innerText = 'Searching The Archives, Please Be Patient';
@@ -156,7 +161,7 @@ function step5(){
 document.getElementById('step6').addEventListener('click', step6);
 function step6(){
     const status = document.getElementById('step69Status');
-    const name = document.getElementById('name_step6').value;
+    const name = strip(document.getElementById('name_step6').value);
     status.innerText = '';
 
     fetch(`/api/lists/create/${name}`)
@@ -169,7 +174,7 @@ function step6(){
 document.getElementById('step9').addEventListener('click', step9);
 function step9(){
     const status = document.getElementById('step69Status');
-    const name = document.getElementById('name_step6').value;
+    const name = strip(document.getElementById('name_step6').value);
     status.innerText = '';
 
     fetch(`/api/lists/delete/${name}`)
@@ -183,8 +188,8 @@ function step9(){
 document.getElementById('step7').addEventListener('click', step7);
 function step7(){
     const status = document.getElementById('step7Status');
-    const name = document.getElementById('name_step7').value;
-    const id = document.getElementById('id_step7').value;
+    const name = strip(document.getElementById('name_step7').value);
+    const id = parseInt(document.getElementById('id_step7').value);
     status.innerText = '';
 
     fetch(`/api/lists/write/${name}/${id}`)
@@ -204,7 +209,7 @@ function step8Clear(){
 document.getElementById('step8').addEventListener('click', step8);
 function step8(){
     const status = document.getElementById('step8Status');
-    const name = document.getElementById('name_step8').value;
+    const name = strip(document.getElementById('name_step8').value);
     const ul = document.getElementById('step8Result');
     while(ul.firstChild) ul.removeChild(ul.firstChild);
     
