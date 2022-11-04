@@ -327,7 +327,10 @@ listsRoute.route('/read/:name')
             else{
                 fs.readFile(path, function(errr, data) {
                     if (errr) return res.status(404).send(JSON.stringify(`List '${req.params.name}' Could Not Be Read`));
-                    else res.send(data);
+                    else {
+                        if(data.length === 0) return res.status(404).send(JSON.stringify(`List '${req.params.name}' Is Empty`));
+                        else return res.send(data);
+                    }
                 });
             }
         });
@@ -356,6 +359,8 @@ listsRoute.route('/list')
                 let resData = [];
                 let index = 0;
                 for(file of files){
+                    console.log(`'${files}'`)
+                    if(file === '.json') continue;
                     let totalTime = 0;
                     if(res.status === 404) break;
                     let path = `./StoredLists/${file}`
@@ -376,7 +381,7 @@ listsRoute.route('/list')
                                 resData[index]['duration'] = '0:00';
                             }
                         }
-                        if(res.status !== 404 && files.length === resData.length)
+                        if(res.status !== 404 && files.length-1 === resData.length)
                             res.send(JSON.stringify(resData));
                         index++;
                     });
