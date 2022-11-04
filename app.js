@@ -291,8 +291,20 @@ listsRoute.route('/write/:name/:id')
                             }
                             if(!exst){
                                 writeData = data.length>0? 
-                                (data.concat([{'track_id':`${req.params.id}`, 'track_duration':tracksArr[indexID].track_duration}])) 
-                                : ([{'track_id':`${req.params.id}`, 'track_duration':tracksArr[indexID].track_duration}]);
+                                (data.concat([{'track_id':`${req.params.id}`,
+                                'track_title':tracksArr[indexID].track_title,  
+                                'track_duration':tracksArr[indexID].track_duration, 
+                                'artist_id':tracksArr[indexID].artist_id, 
+                                'artist_name':tracksArr[indexID].artist_name,
+                                'album_id':tracksArr[indexID].album_id, 
+                                'album_title':tracksArr[indexID].album_title}])) 
+                                : ([{'track_id':`${req.params.id}`,
+                                'track_title':tracksArr[indexID].track_title,  
+                                'track_duration':tracksArr[indexID].track_duration, 
+                                'artist_id':tracksArr[indexID].artist_id, 
+                                'artist_name':tracksArr[indexID].artist_name,
+                                'album_id':tracksArr[indexID].album_id, 
+                                'album_title':tracksArr[indexID].album_title}]);
                                 fs.writeFile(path, JSON.stringify(writeData), function (errr) {
                                     if (errr) return res.status(404).send(JSON.stringify(`Track Id '${req.params.id}' Could Not Be Added`));
                                     else return res.send(JSON.stringify(`Track Id '${req.params.id}' Successfully Added`));
@@ -373,12 +385,12 @@ listsRoute.route('/list')
         });
     });
 
-function timeToNum(time){
-    return parseInt(time.split(':')[0])*60 + parseInt(time.split(':')[1]);
-}
-function numToTime(num){
-    return '' + (parseInt(num/60)) + ':' + (parseInt(num%60) !== 0? parseInt(num%60) : '00');
-}
+// function timeToNum(time){
+//     return parseInt(time.split(':')[0])*60 + parseInt(time.split(':')[1]);
+// }
+// function numToTime(num){
+//     return '' + (parseInt(num/60)) + ':' + (parseInt(num%60) !== 0? parseInt(num%60) : '00');
+// }
 const port = process.env.PORT || 3000;
 app.listen(port, () => console.log(`Listening To ${port}`))
 
