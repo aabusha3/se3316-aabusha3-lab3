@@ -214,7 +214,9 @@ function step8(){
             if(res.status === 200){
                 data.forEach(d => {
                     const li = document.createElement('li');
-                    li.appendChild(document.createTextNode(`Track ID: ${d.track_id}`))
+                    li.appendChild(document.createTextNode(`Track ID: ${d.track_id} Track Title: ${d.track_title} 
+                    Track Duration: ${d.track_duration} Artist ID: ${d.artist_id} Artist Name: ${d.artist_name} 
+                    Album ID: ${d.album_id} Album Name: ${d.album_title}`));
                     ul.appendChild(li);
                 });
                 status.innerText = 'Ids In List Displayed Successfully';

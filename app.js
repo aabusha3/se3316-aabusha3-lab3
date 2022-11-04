@@ -385,12 +385,6 @@ listsRoute.route('/list')
         });
     });
 
-// function timeToNum(time){
-//     return parseInt(time.split(':')[0])*60 + parseInt(time.split(':')[1]);
-// }
-// function numToTime(num){
-//     return '' + (parseInt(num/60)) + ':' + (parseInt(num%60) !== 0? parseInt(num%60) : '00');
-// }
 const port = process.env.PORT || 3000;
 app.listen(port, () => console.log(`Listening To ${port}`))
 
