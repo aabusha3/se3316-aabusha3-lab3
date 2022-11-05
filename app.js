@@ -18,6 +18,11 @@ const tracksArr = new Array();
 fs.createReadStream("./lab3-data/raw_tracks.csv").pipe(csv()).on('data', (data) => tracksArr.push(data));
 
 
+function strip(html){
+    let doc = new DOMParser().parseFromString(html, 'text/html');
+    return doc.body.textContent || "";
+}
+
 app.use('/', express.static('static'));
 app.use('/api/genres', genresRoute);
 app.use('/api/artists', artistsRoute);
@@ -36,7 +41,7 @@ genresRoute.route('/')
     res.send(genresArr);
     })
     .post((req, res) => {
-        const newID = req.body;
+        const newID = strip(req.body);
         newID.genre_id = Math.max(...genresArr.genre_id)+1;
         if(!(newID['#tracks'] && newID.parent && newID.title && newID.top_level)) 
             res.status(404).send(JSON.stringify('please make sure all parts of the genre are present in your request'));
@@ -48,22 +53,24 @@ genresRoute.route('/')
 
 genresRoute.route('/:genre_id')
     .get((req, res) => {
-        const id = genresArr.find(g => parseInt(g.genre_id) === parseInt(req.params.genre_id));
+        const gId = parseInt(req.params.genre_id);
+        const id = genresArr.find(g => parseInt(g.genre_id) === gId);
         if(id) res.send(id);
-        else res.status(404).send(JSON.stringify(`Genre ID '${req.params.genre_id}' was not found`));
+        else res.status(404).send(JSON.stringify(`Genre ID '${gId}' was not found`));
     })
     .put((req, res) => {
-        const newID = req.body;
+        const newID = strip(req.body);
         newID.genre_id = parseInt(req.params.genre_id);
-        const indexID = genresArr.findIndex(g => parseInt(g.genre_id) === parseInt(newID.genre_id));
+        const indexID = genresArr.findIndex(g => parseInt(g.genre_id) === newID.genre_id);
         if(indexID < 0) genresArr.push(newID);
         else genresArr[indexID] = newID;
         res.send(newID);
     })
     .post((req, res) => {
-        const newID = req.body;
-        const indexID = genresArr.findIndex(g => parseInt(g.genre_id) === parseInt(req.params.genre_id));
-        if(indexID < 0) res.status(404).send(JSON.stringify(`Genre ID '${req.params.genre_id}' was not found`));
+        const gId = parseInt(req.params.genre_id);
+        const newID = strip(req.body);
+        const indexID = genresArr.findIndex(g => parseInt(g.genre_id) === gId);
+        if(indexID < 0) res.status(404).send(JSON.stringify(`Genre ID '${gId}' was not found`));
         else {
             if(newID['#tracks']) genresArr[indexID]['#tracks'] = parseInt(genresArr[indexID]['#tracks']) + parseInt(newID['#tracks']);
             if(newID.parent) genresArr[indexID].parent = parseInt(genresArr[indexID].parent) + parseInt(newID.parent);
@@ -73,10 +80,11 @@ genresRoute.route('/:genre_id')
         }
     })
     .delete((req, res) => {
-        const indexID = genresArr.findIndex(g => parseInt(g.genre_id) === parseInt(req.params.genre_id));
-        if(indexID < 0) res.status(404).send(JSON.stringify(`Genre ID '${req.params.genre_id}' does not exist`));
+        const gId = parseInt(req.params.genre_id);
+        const indexID = genresArr.findIndex(g => parseInt(g.genre_id) === gId);
+        if(indexID < 0) res.status(404).send(JSON.stringify(`Genre ID '${gId}' does not exist`));
         else {
-            res.send(JSON.stringify(`Removed Genre ID '${req.params.genre_id}'`));
+            res.send(JSON.stringify(`Removed Genre ID '${gId}'`));
             genresArr.splice(indexID, 1);
         }
     });
@@ -88,7 +96,7 @@ artistsRoute.route('/')
     res.send(artistsArr);
     })
     .post((req, res) => {
-        const newID = req.body;
+        const newID = strip(req.body);
         newID.artist_id = Math.max(...artistsArr.artist_id)+1;
         if(!(newID.artist_name && newID.artist_handle && newID.tags && newID.artist_url 
             && newID.artist_favorites && newID.artist_comments  && newID.artist_date_created)) 
@@ -101,22 +109,24 @@ artistsRoute.route('/')
 
 artistsRoute.route('/:artist_id')
     .get((req, res) => {
-        const id = artistsArr.find(r => parseInt(r.artist_id) === parseInt(req.params.artist_id));
+        const rId = parseInt(req.params.artist_id);
+        const id = artistsArr.find(r => parseInt(r.artist_id) === rId);
         if(id) res.send(id);
-        else res.status(404).send(JSON.stringify(`Artist ID '${req.params.artist_id}' was not found`));
+        else res.status(404).send(JSON.stringify(`Artist ID '${rId}' was not found`));
     })
     .put((req, res) => {
-        const newID = req.body;
+        const newID = strip(req.body);
         newID.artist_id = parseInt(req.params.artist_id);
-        const indexID = artistsArr.findIndex(r => parseInt(r.artist_id) === parseInt(newID.artist_id));
+        const indexID = artistsArr.findIndex(r => parseInt(r.artist_id) === newID.artist_id);
         if(indexID < 0) artistsArr.push(newID);
         else artistsArr[indexID] = newID;
         res.send(newID);
     })
     .post((req, res) => {
-        const newID = req.body;
-        const indexID = artistsArr.findIndex(r => parseInt(r.artist_id) === parseInt(req.params.artist_id));
-        if(indexID < 0) res.status(404).send(JSON.stringify(`Artist ID '${req.params.artist_id}' was not found`));
+        const rId = parseInt(req.params.artist_id);
+        const newID = strip(req.body);
+        const indexID = artistsArr.findIndex(r => parseInt(r.artist_id) === rId);
+        if(indexID < 0) res.status(404).send(JSON.stringify(`Artist ID '${rId}' was not found`));
         else {
             if(newID.artist_name) artistsArr[indexID].artist_name += (' ' + newID.artist_name);
             if(newID.artist_handle) artistsArr[indexID].artist_handle += (' ' + newID.artist_handle);
@@ -129,10 +139,11 @@ artistsRoute.route('/:artist_id')
         }
     })
     .delete((req, res) => {
-        const indexID = artistsArr.findIndex(r => parseInt(r.artist_id) === parseInt(req.params.artist_id));
-        if(indexID < 0) res.status(404).send(JSON.stringify(`Artist ID '${req.params.artist_id}' does not exist`));
+        const rId = parseInt(req.params.artist_id);
+        const indexID = artistsArr.findIndex(r => parseInt(r.artist_id) === rId);
+        if(indexID < 0) res.status(404).send(JSON.stringify(`Artist ID '${rId}' does not exist`));
         else {
-            res.send(JSON.stringify(`Removed Artist ID '${req.params.artist_id}'`));
+            res.send(JSON.stringify(`Removed Artist ID '${rId}'`));
             artistsArr.splice(indexID, 1);
         }
     });
@@ -144,7 +155,7 @@ albumsRoute.route('/')
     res.send(albumsArr);
     })
     .post((req, res) => {
-        const newID = req.body;
+        const newID = strip(req.body);
         newID.album_id = Math.max(...albumsArr.album_id)+1;
         if(!(newID.album_title && newID.album_date_created && newID.album_favorites && newID.artist_name 
             && newID.artist_url && newID.artist_favorites  && newID.tags)) 
@@ -157,22 +168,24 @@ albumsRoute.route('/')
 
 albumsRoute.route('/:album_id')
     .get((req, res) => {
-        const id = albumsArr.find(l => parseInt(l.album_id) === parseInt(req.params.album_id));
+        const lId = parseInt(req.params.album_id);
+        const id = albumsArr.find(l => parseInt(l.album_id) === lId);
         if(id) res.send(id);
-        else res.status(404).send(JSON.stringify(`Album ID '${req.params.album_id}' was not found`));
+        else res.status(404).send(JSON.stringify(`Album ID '${lId}' was not found`));
     })
     .put((req, res) => {
-        const newID = req.body;
+        const newID = strip(req.body);
         newID.album_id = parseInt(req.params.album_id);
-        const indexID = albumsArr.findIndex(l => parseInt(l.album_id) === parseInt(newID.album_id));
+        const indexID = albumsArr.findIndex(l => parseInt(l.album_id) === newID.album_id);
         if(indexID < 0) albumsArr.push(newID);
         else albumsArr[indexID] = newID;
         res.send(newID);
     })
     .post((req, res) => {
-        const newID = req.body;
-        const indexID = albumsArr.findIndex(l => parseInt(l.album_id) === parseInt(req.params.album_id));
-        if(indexID < 0) res.status(404).send(JSON.stringify(`Album ID '${req.params.album_id}' was not found`));
+        const lId = parseInt(req.params.album_id);
+        const newID = strip(req.body);
+        const indexID = albumsArr.findIndex(l => parseInt(l.album_id) === lId);
+        if(indexID < 0) res.status(404).send(JSON.stringify(`Album ID '${lId}' was not found`));
         else {
             if(newID.album_title) albumsArr[indexID].album_title += (' ' + newID.album_title);
             if(newID.album_date_created) albumsArr[indexID].album_date_created = newID.album_date_created;
@@ -185,10 +198,11 @@ albumsRoute.route('/:album_id')
         }
     })
     .delete((req, res) => {
-        const indexID = albumsArr.findIndex(l => parseInt(l.album_id) === parseInt(req.params.album_id));
-        if(indexID < 0) res.status(404).send(JSON.stringify(`Album ID '${req.params.album_id}' does not exist`));
+        const lId = parseInt(req.params.album_id);
+        const indexID = albumsArr.findIndex(l => parseInt(l.album_id) === lId);
+        if(indexID < 0) res.status(404).send(JSON.stringify(`Album ID '${lId}' does not exist`));
         else {
-            res.send(JSON.stringify(`Removed Album ID '${req.params.album_id}'`));
+            res.send(JSON.stringify(`Removed Album ID '${lId}'`));
             albumsArr.splice(indexID, 1);
         }
     });
@@ -200,7 +214,7 @@ tracksRoute.route('/')
     res.send(tracksArr);
     })
     .post((req, res) => {
-        const newID = req.body;
+        const newID = strip(req.body);
         newID.track_id = Math.max(...tracksArr.track_id)+1;
         if(!(newID.album_id && newID.album_title && newID.artist_id && newID.artist_name && newID.tags
             && newID.track_date_created && newID.track_date_recorded && newID.track_duration 
@@ -214,22 +228,24 @@ tracksRoute.route('/')
   
 tracksRoute.route('/:track_id')
     .get((req, res) => {
-        const id = tracksArr.find(t => parseInt(t.track_id) === parseInt(req.params.track_id));
+        const tId = parseInt(req.params.track_id);
+        const id = tracksArr.find(t => parseInt(t.track_id) === tId);
         if(id) res.send(id);
-        else res.status(404).send(JSON.stringify(`Tracks ID '${req.params.track_id}' was not found`));
+        else res.status(404).send(JSON.stringify(`Tracks ID '${tId}' was not found`));
     })
     .put((req, res) => {
-        const newID = req.body;
+        const newID = strip(req.body);
         newID.track_id = parseInt(req.params.track_id);
-        const indexID = tracksArr.findIndex(t => parseInt(t.track_id) === parseInt(newID.track_id));
+        const indexID = tracksArr.findIndex(t => parseInt(t.track_id) === newID.track_id);
         if(indexID < 0) tracksArr.push(newID);
         else tracksArr[indexID] = newID;
         res.send(newID);
     })
     .post((req, res) => {
-        const newID = req.body;
-        const indexID = tracksArr.findIndex(t => parseInt(t.track_id) === parseInt(req.params.track_id));
-        if(indexID < 0) res.status(404).send(JSON.stringify(`Tracks ID '${req.params.track_id}' was not found`));
+        const tId = parseInt(req.params.track_id);
+        const newID = strip(req.body);
+        const indexID = tracksArr.findIndex(t => parseInt(t.track_id) === tId);
+        if(indexID < 0) res.status(404).send(JSON.stringify(`Tracks ID '${tId}' was not found`));
         else {
             if(newID.album_id) tracksArr[indexID].album_id = parseInt(tracksArr[indexID].album_id) + parseInt(newID.album_id);
             if(newID.album_title) tracksArr[indexID].album_title += (' ' + newID.album_title);
@@ -246,10 +262,11 @@ tracksRoute.route('/:track_id')
         }
     })
     .delete((req, res) => {
-        const indexID = tracksArr.findIndex(t => parseInt(t.track_id) === parseInt(req.params.track_id));
-        if(indexID < 0) res.status(404).send(JSON.stringify(`Tracks ID '${req.params.track_id}' does not exist`));
+        const tId = parseInt(req.params.track_id);
+        const indexID = tracksArr.findIndex(t => parseInt(t.track_id) === tId);
+        if(indexID < 0) res.status(404).send(JSON.stringify(`Tracks ID '${tId}' does not exist`));
         else {
-            res.send(JSON.stringify(`Removed Tracks ID '${req.params.track_id}'`));
+            res.send(JSON.stringify(`Removed Tracks ID '${tId}'`));
             tracksArr.splice(indexID, 1);
         }
     });
@@ -257,48 +274,51 @@ tracksRoute.route('/:track_id')
     
 listsRoute.route('/create/:name')
     .get((req, res) => {
-        const path = `./StoredLists/${req.params.name}.json`
+        const name = strip(req.params.name);
+        const path = `./StoredLists/${name}.json`
         fs.access(path, fs.F_OK, (err) => {
             if (err) {
                 fs.open(path, 'w', function (err) {
-                    if (err) return res.status(404).send(JSON.stringify(`List '${req.params.name}' Was Not Created :(`));
-                    else return res.send(JSON.stringify(`List '${req.params.name}' Created Successfully`));
+                    if (err) return res.status(404).send(JSON.stringify(`List '${name}' Was Not Created :(`));
+                    else return res.send(JSON.stringify(`List '${name}' Created Successfully`));
                 });
             }
-            else return res.status(404).send(JSON.stringify(`List '${req.params.name}' Already Exists`));
+            else return res.status(404).send(JSON.stringify(`List '${name}' Already Exists`));
         });
     });
 
 listsRoute.route('/write/:name/:id')
     .get((req, res) => {
-        const path = `./StoredLists/${req.params.name}.json`
-        const indexID = tracksArr.findIndex(t => parseInt(t.track_id) === parseInt(req.params.id));
+        const name = strip(req.params.name);
+        const id = parseInt(req.params.id);
+        const path = `./StoredLists/${name}.json`
+        const indexID = tracksArr.findIndex(t => parseInt(t.track_id) === id);
         if(indexID >= 0){
             fs.access(path, fs.F_OK, (err) => {
-                if (err) return res.status(404).send(JSON.stringify(`List '${req.params.name}' Does Not Exist`));
+                if (err) return res.status(404).send(JSON.stringify(`List '${name}' Does Not Exist`));
                 else {
                     let writeData = [];
                     fs.readFile(path, function(err, data) {
-                        if (err) return res.status(404).send(JSON.stringify(`List '${req.params.name}' Could Not Be Read`));
+                        if (err) return res.status(404).send(JSON.stringify(`List '${name}' Could Not Be Read`));
                         else {
                             let exst = false;
                             if(data.length>0) data = JSON.parse(data);
                             for(d of data){
-                                if(parseInt(d.track_id) === parseInt(req.params.id)){
+                                if(parseInt(d.track_id) === id){
                                     exst = true;
                                     break;
                                 }
                             }
                             if(!exst){
                                 writeData = data.length>0? 
-                                (data.concat([{'track_id':`${req.params.id}`,
+                                (data.concat([{'track_id':`${id}`,
                                 'track_title':tracksArr[indexID].track_title,  
                                 'track_duration':tracksArr[indexID].track_duration, 
                                 'artist_id':tracksArr[indexID].artist_id, 
                                 'artist_name':tracksArr[indexID].artist_name,
                                 'album_id':tracksArr[indexID].album_id, 
                                 'album_title':tracksArr[indexID].album_title}])) 
-                                : ([{'track_id':`${req.params.id}`,
+                                : ([{'track_id':`${id}`,
                                 'track_title':tracksArr[indexID].track_title,  
                                 'track_duration':tracksArr[indexID].track_duration, 
                                 'artist_id':tracksArr[indexID].artist_id, 
@@ -306,29 +326,30 @@ listsRoute.route('/write/:name/:id')
                                 'album_id':tracksArr[indexID].album_id, 
                                 'album_title':tracksArr[indexID].album_title}]);
                                 fs.writeFile(path, JSON.stringify(writeData), function (errr) {
-                                    if (errr) return res.status(404).send(JSON.stringify(`Track Id '${req.params.id}' Could Not Be Added`));
-                                    else return res.send(JSON.stringify(`Track Id '${req.params.id}' Successfully Added`));
+                                    if (errr) return res.status(404).send(JSON.stringify(`Track Id '${id}' Could Not Be Added`));
+                                    else return res.send(JSON.stringify(`Track Id '${id}' Successfully Added`));
                                 });
                             }
-                            else return res.status(404).send(JSON.stringify(`Tracks ID '${req.params.id}' Is Already In Your List`));
+                            else return res.status(404).send(JSON.stringify(`Tracks ID '${id}' Is Already In Your List`));
                         }
                     });
                 }
             });
         }
-        else return res.status(404).send(JSON.stringify(`Tracks ID '${req.params.id}' Does Not Exist In The Track File`));
+        else return res.status(404).send(JSON.stringify(`Tracks ID '${id}' Does Not Exist In The Track File`));
     });
 
 listsRoute.route('/read/:name')
     .get((req, res) => {
-        const path = `./StoredLists/${req.params.name}.json`
+        const name = strip(req.params.name);
+        const path = `./StoredLists/${name}.json`
         fs.access(path, fs.F_OK, (err) => {
-            if(err) return res.status(404).send(JSON.stringify(`List '${req.params.name}' Does Not Exist`));
+            if(err) return res.status(404).send(JSON.stringify(`List '${name}' Does Not Exist`));
             else{
                 fs.readFile(path, function(errr, data) {
-                    if (errr) return res.status(404).send(JSON.stringify(`List '${req.params.name}' Could Not Be Read`));
+                    if (errr) return res.status(404).send(JSON.stringify(`List '${name}' Could Not Be Read`));
                     else {
-                        if(data.length === 0) return res.status(404).send(JSON.stringify(`List '${req.params.name}' Is Empty`));
+                        if(data.length === 0) return res.status(404).send(JSON.stringify(`List '${name}' Is Empty`));
                         else return res.send(data);
                     }
                 });
@@ -338,13 +359,14 @@ listsRoute.route('/read/:name')
 
 listsRoute.route('/delete/:name')
     .get((req, res) => {
-        const path = `./StoredLists/${req.params.name}.json`
+        const name = strip(req.params.name);
+        const path = `./StoredLists/${name}.json`
         fs.access(path, fs.F_OK, (err) => {
-            if(err) return res.status(404).send(JSON.stringify(`List '${req.params.name}' Does Not Exist`));
+            if(err) return res.status(404).send(JSON.stringify(`List '${name}' Does Not Exist`));
             else{
                 fs.unlink(path, function(errr) {
-                    if (errr) return res.status(404).send(JSON.stringify(`List '${req.params.name}' Could Not Be Deleted`));
-                    else return res.send(JSON.stringify(`List '${req.params.name}' Successfully Deleted`));
+                    if (errr) return res.status(404).send(JSON.stringify(`List '${name}' Could Not Be Deleted`));
+                    else return res.send(JSON.stringify(`List '${name}' Successfully Deleted`));
                 });
             }
         });
@@ -359,7 +381,6 @@ listsRoute.route('/list')
                 let resData = [];
                 let index = 0;
                 for(file of files){
-                    console.log(`'${files}'`)
                     if(file === '.json') continue;
                     let totalTime = 0;
                     if(res.status === 404) break;
