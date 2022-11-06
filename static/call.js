@@ -34,54 +34,60 @@ function step1(){
 
 document.getElementById('step2_alt').addEventListener('click', step2Clear);
 function step2Clear(){
-    const li = document.getElementById('step2Result');
-    li.innerHTML = '';
+    const ul = document.getElementById('step2Result');
+    while(ul.firstChild) ul.removeChild(ul.firstChild);
     document.getElementById('step2Status').innerText = document.createTextNode("Artist's Info Cleared Successfully").textContent;
 }
 document.getElementById('step2').addEventListener('click', step2);
 function step2(){
     const status = document.getElementById('step2Status');
     const id = parseInt(document.getElementById('id_step2').value);
-    const li = document.getElementById('step2Result');
+    const ul = document.getElementById('step2Result');
+    while(ul.firstChild) ul.removeChild(ul.firstChild);
     status.innerText = document.createTextNode('').textContent;
-    li.innerHTML = '';
-
+   
+    if(id.toString() === 'NaN') return status.innerText = document.createTextNode(`Entered Id Is Not A Number`).textContent;
     fetch(`/api/artists/${id}`)
     .then(res => res.json()
         .then(d => {
+            const li = document.createElement('li');
             li.appendChild(document.createTextNode(`ID: ${d.artist_id} Name: ${d.artist_name} 
             Handle: ${d.artist_handle} Tags: ${d.tags} URL: ${d.artist_url} Favorites: ${d.artist_favorites} 
-            Comments: ${d.artist_comments} Date Created: ${d.artist_date_created}`))
+            Comments: ${d.artist_comments} Date Created: ${d.artist_date_created}`));
+            ul.appendChild(li);
             status.innerText = document.createTextNode(`Artist ${id} Found`).textContent;
         })
         .catch(err => status.innerText = document.createTextNode(`Artist ${id} Not Found`).textContent)
     )
-    .catch(err => status.innerText = document.createTextNode(`Artists List Could Not Be Found`).textContent);
+    .catch(err => status.innerText = document.createTextNode(`Artists List Could Not Be Found`).textContent); 
 }
 
 
 document.getElementById('step3_alt').addEventListener('click', step3Clear);
 function step3Clear(){
-    const li = document.getElementById('step3Result');
-    li.innerHTML = '';
+    const ul = document.getElementById('step3Result');
+    while(ul.firstChild) ul.removeChild(ul.firstChild);
     document.getElementById('step3Status').innerText = document.createTextNode("Track's Info Cleared Successfully").textContent;
 }
 document.getElementById('step3').addEventListener('click', step3);
 function step3(){
     const status = document.getElementById('step3Status');
     const id = parseInt(document.getElementById('id_step3').value);
-    const li = document.getElementById('step3Result');
+    const ul = document.getElementById('step3Result');
+    while(ul.firstChild) ul.removeChild(ul.firstChild);
     status.innerText = document.createTextNode('').textContent;
-    li.innerHTML = '';
 
+    if(id.toString() === 'NaN') return status.innerText = document.createTextNode(`Entered Id Is Not A Number`).textContent;
     fetch(`/api/tracks/${id}`)
     .then(res => res.json()
         .then(d => {
+            const li = document.createElement('li');
             li.appendChild(document.createTextNode(`Album ID: ${d.album_id} Album Title: ${d.album_title} 
             Artist ID: ${d.artist_id} Artist Name: ${d.artist_name} Tags: ${d.tags} 
             Date Created: ${d.track_date_created} Date Recorded: ${d.track_date_recorded} 
             Duration: ${d.track_duration} Genres: ${d.track_genres} Track#: ${d.track_number} 
-            Track Title: ${d.track_title}`))
+            Track Title: ${d.track_title}`));
+            ul.appendChild(li);
             status.innerText = document.createTextNode(`Track ${id} Found`).textContent;
         })
         .catch(err => status.innerText = document.createTextNode(`Track ${id} Not Found`).textContent)
@@ -118,6 +124,7 @@ function step4(){
                 }
                 if(max === 0) break;
             }
+            if(ul.childNodes.length === 0) return status.innerText = document.createTextNode('No Track IDs Found').textContent;
             status.innerText = document.createTextNode('Track IDs Displayed Successfully').textContent;
         })
         .catch(err => status.innerText = document.createTextNode(`Tracks List Data Not Found`).textContent)
@@ -150,6 +157,7 @@ function step5(){
                     ul.appendChild(li);
                 }
             });
+            if(ul.childNodes.length === 0) return status.innerText = document.createTextNode('No Artist IDs Found').textContent;
             status.innerText = document.createTextNode('Artist IDs Displayed Successfully').textContent;
         })
         .catch(err => status.innerText = document.createTextNode(`Artists List Data Not Found`).textContent)
@@ -224,11 +232,9 @@ function step8(){
                     Album ID: ${d.album_id} Album Name: ${d.album_title}`));
                     ul.appendChild(li);
                 });
-                status.innerText = document.createTextNode('Ids In List Displayed Successfully').textContent;
+                return status.innerText = document.createTextNode('Ids In List Displayed Successfully').textContent;
             }
-            else if(res.status === 404){
-                status.innerText = document.createTextNode(data).textContent;
-            }
+            else if(res.status === 404) return status.innerText = document.createTextNode(data).textContent;
         })
         .catch(err => status.innerText = document.createTextNode(`List Data Not Found`).textContent)
     )
@@ -241,7 +247,7 @@ document.getElementById('step10_alt').addEventListener('click', step10Clear);
 function step10Clear(){
     const ul = document.getElementById('step10Result');
     while(ul.firstChild) ul.removeChild(ul.firstChild);
-    document.getElementById('step10Status').innerText = document.createTextNode('Genres Cleared Successfully').textContent;
+    document.getElementById('step10Status').innerText = document.createTextNode('Lists Cleared Successfully').textContent;
 }
 document.getElementById('step10').addEventListener('click', step10);
 function step10(){
@@ -253,12 +259,16 @@ function step10(){
     fetch('/api/lists/list')
     .then(res => res.json()
         .then(data => {
+            if(res.status === 200){
             data.forEach(d => {
                 const li = document.createElement('li');
                 li.appendChild(document.createTextNode(`Name: ${d.name} ID Count: ${d.length} Duration: ${d.duration}`))
                 ul.appendChild(li);
             });
             status.innerText = document.createTextNode('Lists Displayed Successfully').textContent;
+        }
+        else if(res.status === 404)
+            status.innerText = document.createTextNode(data).textContent;
         })
         .catch(err => status.innerText = document.createTextNode(`Lists Data Not Found`))
     )

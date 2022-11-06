@@ -1,3 +1,4 @@
+const parse = require('node-html-parser');
 const csv = require('csv-parser');
 const fs = require('fs');
 const express = require('express');
@@ -17,12 +18,6 @@ fs.createReadStream("./lab3-data/raw_albums.csv").pipe(csv()).on('data', (data) 
 const tracksArr = new Array();
 fs.createReadStream("./lab3-data/raw_tracks.csv").pipe(csv()).on('data', (data) => tracksArr.push(data));
 
-
-function strip(html){
-    let doc = new DOMParser().parseFromString(html, 'text/html');
-    return doc.body.textContent || "";
-}
-
 app.use('/', express.static('static'));
 app.use('/api/genres', genresRoute);
 app.use('/api/artists', artistsRoute);
@@ -36,12 +31,17 @@ albumsRoute.use(express.json());
 tracksRoute.use(express.json());
 listsRoute.use(express.json());
 
+function strip(html){
+    let doc = parse(html);
+    return doc.body.textContent || "";
+}
+
 genresRoute.route('/')
     .get((req, res) => {
     res.send(genresArr);
     })
     .post((req, res) => {
-        const newID = strip(req.body);
+        const newID = req.body;
         newID.genre_id = Math.max(...genresArr.genre_id)+1;
         if(!(newID['#tracks'] && newID.parent && newID.title && newID.top_level)) 
             res.status(404).send(JSON.stringify('please make sure all parts of the genre are present in your request'));
@@ -59,7 +59,7 @@ genresRoute.route('/:genre_id')
         else res.status(404).send(JSON.stringify(`Genre ID '${gId}' was not found`));
     })
     .put((req, res) => {
-        const newID = strip(req.body);
+        const newID = req.body;
         newID.genre_id = parseInt(req.params.genre_id);
         const indexID = genresArr.findIndex(g => parseInt(g.genre_id) === newID.genre_id);
         if(indexID < 0) genresArr.push(newID);
@@ -68,7 +68,7 @@ genresRoute.route('/:genre_id')
     })
     .post((req, res) => {
         const gId = parseInt(req.params.genre_id);
-        const newID = strip(req.body);
+        const newID = req.body;
         const indexID = genresArr.findIndex(g => parseInt(g.genre_id) === gId);
         if(indexID < 0) res.status(404).send(JSON.stringify(`Genre ID '${gId}' was not found`));
         else {
@@ -96,7 +96,7 @@ artistsRoute.route('/')
     res.send(artistsArr);
     })
     .post((req, res) => {
-        const newID = strip(req.body);
+        const newID = req.body;
         newID.artist_id = Math.max(...artistsArr.artist_id)+1;
         if(!(newID.artist_name && newID.artist_handle && newID.tags && newID.artist_url 
             && newID.artist_favorites && newID.artist_comments  && newID.artist_date_created)) 
@@ -115,7 +115,7 @@ artistsRoute.route('/:artist_id')
         else res.status(404).send(JSON.stringify(`Artist ID '${rId}' was not found`));
     })
     .put((req, res) => {
-        const newID = strip(req.body);
+        const newID = req.body;
         newID.artist_id = parseInt(req.params.artist_id);
         const indexID = artistsArr.findIndex(r => parseInt(r.artist_id) === newID.artist_id);
         if(indexID < 0) artistsArr.push(newID);
@@ -124,7 +124,7 @@ artistsRoute.route('/:artist_id')
     })
     .post((req, res) => {
         const rId = parseInt(req.params.artist_id);
-        const newID = strip(req.body);
+        const newID = req.body;
         const indexID = artistsArr.findIndex(r => parseInt(r.artist_id) === rId);
         if(indexID < 0) res.status(404).send(JSON.stringify(`Artist ID '${rId}' was not found`));
         else {
@@ -155,7 +155,7 @@ albumsRoute.route('/')
     res.send(albumsArr);
     })
     .post((req, res) => {
-        const newID = strip(req.body);
+        const newID = req.body;
         newID.album_id = Math.max(...albumsArr.album_id)+1;
         if(!(newID.album_title && newID.album_date_created && newID.album_favorites && newID.artist_name 
             && newID.artist_url && newID.artist_favorites  && newID.tags)) 
@@ -174,7 +174,7 @@ albumsRoute.route('/:album_id')
         else res.status(404).send(JSON.stringify(`Album ID '${lId}' was not found`));
     })
     .put((req, res) => {
-        const newID = strip(req.body);
+        const newID = req.body;
         newID.album_id = parseInt(req.params.album_id);
         const indexID = albumsArr.findIndex(l => parseInt(l.album_id) === newID.album_id);
         if(indexID < 0) albumsArr.push(newID);
@@ -183,7 +183,7 @@ albumsRoute.route('/:album_id')
     })
     .post((req, res) => {
         const lId = parseInt(req.params.album_id);
-        const newID = strip(req.body);
+        const newID = req.body;
         const indexID = albumsArr.findIndex(l => parseInt(l.album_id) === lId);
         if(indexID < 0) res.status(404).send(JSON.stringify(`Album ID '${lId}' was not found`));
         else {
@@ -214,7 +214,7 @@ tracksRoute.route('/')
     res.send(tracksArr);
     })
     .post((req, res) => {
-        const newID = strip(req.body);
+        const newID = req.body;
         newID.track_id = Math.max(...tracksArr.track_id)+1;
         if(!(newID.album_id && newID.album_title && newID.artist_id && newID.artist_name && newID.tags
             && newID.track_date_created && newID.track_date_recorded && newID.track_duration 
@@ -234,7 +234,7 @@ tracksRoute.route('/:track_id')
         else res.status(404).send(JSON.stringify(`Tracks ID '${tId}' was not found`));
     })
     .put((req, res) => {
-        const newID = strip(req.body);
+        const newID = req.body;
         newID.track_id = parseInt(req.params.track_id);
         const indexID = tracksArr.findIndex(t => parseInt(t.track_id) === newID.track_id);
         if(indexID < 0) tracksArr.push(newID);
@@ -243,7 +243,7 @@ tracksRoute.route('/:track_id')
     })
     .post((req, res) => {
         const tId = parseInt(req.params.track_id);
-        const newID = strip(req.body);
+        const newID = req.body;
         const indexID = tracksArr.findIndex(t => parseInt(t.track_id) === tId);
         if(indexID < 0) res.status(404).send(JSON.stringify(`Tracks ID '${tId}' was not found`));
         else {
@@ -365,8 +365,8 @@ listsRoute.route('/delete/:name')
             if(err) return res.status(404).send(JSON.stringify(`List '${name}' Does Not Exist`));
             else{
                 fs.unlink(path, function(errr) {
-                    if (errr) return res.status(404).send(JSON.stringify(`List '${name}' Could Not Be Deleted`));
-                    else return res.send(JSON.stringify(`List '${name}' Successfully Deleted`));
+                    if (errr) res.status(404).send(JSON.stringify(`List '${name}' Could Not Be Deleted`));
+                    else res.send(JSON.stringify(`List '${name}' Successfully Deleted`));
                 });
             }
         });
@@ -377,11 +377,11 @@ listsRoute.route('/list')
         const dir = './StoredLists/'
         fs.readdir(dir, (err, files) => {
             if(err) return res.status(404).send(JSON.stringify('Lists Could Not Be Read Or Do Not Exist'));
+            else if (files.length === 0) return res.status(404).send(JSON.stringify('You Have No Saved Lists'));
             else{
                 let resData = [];
                 let index = 0;
                 for(file of files){
-                    if(file === '.json') continue;
                     let totalTime = 0;
                     if(res.status === 404) break;
                     let path = `./StoredLists/${file}`
@@ -401,9 +401,10 @@ listsRoute.route('/list')
                                 resData[index]['length'] = 0;
                                 resData[index]['duration'] = '0:00';
                             }
+
+                            if(res.status !== 404 && files.length === resData.length)
+                                res.send(JSON.stringify(resData));
                         }
-                        if(res.status !== 404 && files.length-1 === resData.length)
-                            res.send(JSON.stringify(resData));
                         index++;
                     });
                 }
