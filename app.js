@@ -1,4 +1,4 @@
-const parse = require('node-html-parser');
+const { parse } = require('node-html-parser');
 const csv = require('csv-parser');
 const fs = require('fs');
 const express = require('express');
@@ -32,8 +32,8 @@ tracksRoute.use(express.json());
 listsRoute.use(express.json());
 
 function strip(html){
-    let doc = parse(html);
-    return doc.body.textContent || "";
+    let striped = parse(html).childNodes[0]._rawText;
+    return striped || "";
 }
 
 genresRoute.route('/')
@@ -55,8 +55,8 @@ genresRoute.route('/:genre_id')
     .get((req, res) => {
         const gId = parseInt(req.params.genre_id);
         const id = genresArr.find(g => parseInt(g.genre_id) === gId);
-        if(id) res.send(id);
-        else res.status(404).send(JSON.stringify(`Genre ID '${gId}' was not found`));
+        if((typeof id).toString() === 'undefined') res.status(404).send(JSON.stringify(`Genre ID '${gId}' Does Not Exist`));
+        else res.send(id);
     })
     .put((req, res) => {
         const newID = req.body;
@@ -111,8 +111,8 @@ artistsRoute.route('/:artist_id')
     .get((req, res) => {
         const rId = parseInt(req.params.artist_id);
         const id = artistsArr.find(r => parseInt(r.artist_id) === rId);
-        if(id) res.send(id);
-        else res.status(404).send(JSON.stringify(`Artist ID '${rId}' was not found`));
+        if((typeof id).toString() === 'undefined') res.status(404).send(JSON.stringify(`Artist ID '${rId}' Does Not Exist`));
+        else res.send(id);
     })
     .put((req, res) => {
         const newID = req.body;
@@ -170,8 +170,8 @@ albumsRoute.route('/:album_id')
     .get((req, res) => {
         const lId = parseInt(req.params.album_id);
         const id = albumsArr.find(l => parseInt(l.album_id) === lId);
-        if(id) res.send(id);
-        else res.status(404).send(JSON.stringify(`Album ID '${lId}' was not found`));
+        if((typeof id).toString() === 'undefined') res.status(404).send(JSON.stringify(`Album ID '${lId}' Does Not Exist`));
+        else res.send(id);
     })
     .put((req, res) => {
         const newID = req.body;
@@ -230,8 +230,8 @@ tracksRoute.route('/:track_id')
     .get((req, res) => {
         const tId = parseInt(req.params.track_id);
         const id = tracksArr.find(t => parseInt(t.track_id) === tId);
-        if(id) res.send(id);
-        else res.status(404).send(JSON.stringify(`Tracks ID '${tId}' was not found`));
+        if((typeof id).toString() === 'undefined') res.status(404).send(JSON.stringify(`Track ID '${tId}' Does Not Exist`));
+        else res.send(id);
     })
     .put((req, res) => {
         const newID = req.body;

@@ -50,6 +50,7 @@ function step2(){
     fetch(`/api/artists/${id}`)
     .then(res => res.json()
         .then(d => {
+            if(res.status === 404) return status.innerText = document.createTextNode(d).textContent;
             const li = document.createElement('li');
             li.appendChild(document.createTextNode(`ID: ${d.artist_id} Name: ${d.artist_name} 
             Handle: ${d.artist_handle} Tags: ${d.tags} URL: ${d.artist_url} Favorites: ${d.artist_favorites} 
@@ -81,6 +82,7 @@ function step3(){
     fetch(`/api/tracks/${id}`)
     .then(res => res.json()
         .then(d => {
+            if(res.status === 404) return status.innerText = document.createTextNode(d).textContent;
             const li = document.createElement('li');
             li.appendChild(document.createTextNode(`Album ID: ${d.album_id} Album Title: ${d.album_title} 
             Artist ID: ${d.artist_id} Artist Name: ${d.artist_name} Tags: ${d.tags} 
@@ -100,7 +102,7 @@ document.getElementById('step4_alt').addEventListener('click', step4Clear);
 function step4Clear(){
     const ul = document.getElementById('step4Result');
     while(ul.firstChild) ul.removeChild(ul.firstChild);
-    document.getElementById('step4Status').innerText = document.createTextNode('Filetered Track Ids Cleared Successfully').textContent;
+    document.getElementById('step4Status').innerText = document.createTextNode('Filtered Track Ids Cleared Successfully').textContent;
 }
 document.getElementById('step4').addEventListener('click', step4);
 function step4(){
@@ -137,7 +139,7 @@ document.getElementById('step5_alt').addEventListener('click', step5Clear);
 function step5Clear(){
     const ul = document.getElementById('step5Result');
     while(ul.firstChild) ul.removeChild(ul.firstChild);
-    document.getElementById('step5Status').innerText = document.createTextNode('Filetered Artist Ids Cleared Successfully').textContent;
+    document.getElementById('step5Status').innerText = document.createTextNode('Filtered Artist Ids Cleared Successfully').textContent;
 }
 document.getElementById('step5').addEventListener('click', step5);
 function step5(){
