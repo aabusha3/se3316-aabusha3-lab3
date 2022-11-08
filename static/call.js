@@ -47,7 +47,7 @@ function step2(){
     status.innerText = document.createTextNode('').textContent;
    
     if(id.toString() === 'NaN') return status.innerText = document.createTextNode(`Entered Id Is Not A Number`).textContent;
-    fetch(`/api/artists/${id}`)
+    fetch(`/api/artists/id/${id}`)
     .then(res => res.json()
         .then(d => {
             if(res.status === 404) return status.innerText = document.createTextNode(d).textContent;
@@ -79,7 +79,7 @@ function step3(){
     status.innerText = document.createTextNode('').textContent;
 
     if(id.toString() === 'NaN') return status.innerText = document.createTextNode(`Entered Id Is Not A Number`).textContent;
-    fetch(`/api/tracks/${id}`)
+    fetch(`/api/tracks/find/${id}`)
     .then(res => res.json()
         .then(d => {
             if(res.status === 404) return status.innerText = document.createTextNode(d).textContent;
@@ -106,7 +106,6 @@ function step4Clear(){
 }
 document.getElementById('step4').addEventListener('click', step4);
 function step4(){
-    let max = 12;
     const status = document.getElementById('step4Status');
     const tt = strip(document.getElementById('tt_step4').value).toLowerCase();
     const at = strip(document.getElementById('at_step4').value).toLowerCase();
@@ -114,24 +113,61 @@ function step4(){
     while(ul.firstChild) ul.removeChild(ul.firstChild);
     status.innerText = document.createTextNode('Searching The Archives, Please Be Patient').textContent;
 
-    fetch('/api/tracks')
-    .then(res => res.json()
-        .then(data => {
-            for(d of data){
-                if((tt.length>0 && d.track_title.toLowerCase().includes(tt)) || (at.length>0 && d.album_title.toLowerCase().includes(at))){
-                    const li = document.createElement('li');
-                    li.appendChild(document.createTextNode(`Track ID: ${d.track_id}`))
-                    ul.appendChild(li);
-                    max--;
-                }
-                if(max === 0) break;
-            }
-            if(ul.childNodes.length === 0) return status.innerText = document.createTextNode('No Track IDs Found').textContent;
-            status.innerText = document.createTextNode('Track IDs Displayed Successfully').textContent;
-        })
-        .catch(err => status.innerText = document.createTextNode(`Tracks List Data Not Found`).textContent)
-    )
-    .catch(err => status.innerText = document.createTextNode(`Tracks List Could Not Be Found`).textContent);
+    if(tt.length > 0){
+        if(at.length > 0){
+            fetch(`/api/tracks/ttat/${tt}/${at}`)
+            .then(res => res.json()
+                .then(data => {
+                    if(data.length === 0) return status.innerText = document.createTextNode('No Track IDs Found').textContent;
+                    for(d of data){
+                        const li = document.createElement('li');
+                        li.appendChild(document.createTextNode(`Track ID: ${d}`))
+                        ul.appendChild(li);
+                    }
+                    status.innerText = document.createTextNode('Track IDs Displayed Successfully').textContent;
+                })
+                .catch(err => status.innerText = document.createTextNode(`Tracks List Data Not Found`).textContent)
+            )
+            .catch(err => status.innerText = document.createTextNode(`Tracks List Could Not Be Found`).textContent);
+        }
+        else{
+            fetch(`/api/tracks/tt/${tt}`)
+            .then(res => res.json()
+                .then(data => {
+                    if(data.length === 0) return status.innerText = document.createTextNode('No Track IDs Found').textContent;
+                    for(d of data){
+                        const li = document.createElement('li');
+                        li.appendChild(document.createTextNode(`Track ID: ${d}`))
+                        ul.appendChild(li);
+                    }
+                    status.innerText = document.createTextNode('Track IDs Displayed Successfully').textContent;
+                })
+                .catch(err => status.innerText = document.createTextNode(`Tracks List Data Not Found`).textContent)
+            )
+            .catch(err => status.innerText = document.createTextNode(`Tracks List Could Not Be Found`).textContent);
+        }
+    }
+    else{
+        if(at.length > 0){
+            fetch(`/api/tracks/at/${at}`)
+            .then(res => res.json()
+                .then(data => {
+                    if(data.length === 0) return status.innerText = document.createTextNode('No Track IDs Found').textContent;
+                    for(d of data){
+                        const li = document.createElement('li');
+                        li.appendChild(document.createTextNode(`Track ID: ${d}`))
+                        ul.appendChild(li);
+                    }
+                    status.innerText = document.createTextNode('Track IDs Displayed Successfully').textContent;
+                })
+                .catch(err => status.innerText = document.createTextNode(`Tracks List Data Not Found`).textContent)
+            )
+            .catch(err => status.innerText = document.createTextNode(`Tracks List Could Not Be Found`).textContent);
+        }
+        else{
+            status.innerText = document.createTextNode('Please Enter In A Value').textContent;
+        }
+    }
 }
 
 
@@ -149,22 +185,25 @@ function step5(){
     while(ul.firstChild) ul.removeChild(ul.firstChild);
     status.innerText = document.createTextNode('Searching The Archives, Please Be Patient').textContent;
 
-    fetch('/api/artists')
-    .then(res => res.json()
-        .then(data => {
-            data.forEach(d => {
-                if(name.length>0 && d.artist_name.toLowerCase().includes(name)){
+    if(name.length > 0){
+        fetch(`/api/artists/name/${name}`)
+        .then(res => res.json()
+            .then(data => {
+                if(data.length === 0) return status.innerText = document.createTextNode('No Artist IDs Found').textContent;
+                for(d of data){
                     const li = document.createElement('li');
-                    li.appendChild(document.createTextNode(`Artist ID: ${d.artist_id}`))
+                    li.appendChild(document.createTextNode(`Artist ID: ${d}`))
                     ul.appendChild(li);
                 }
-            });
-            if(ul.childNodes.length === 0) return status.innerText = document.createTextNode('No Artist IDs Found').textContent;
-            status.innerText = document.createTextNode('Artist IDs Displayed Successfully').textContent;
-        })
-        .catch(err => status.innerText = document.createTextNode(`Artists List Data Not Found`).textContent)
-    )
-    .catch(err => status.innerText = document.createTextNode(`Artists List Could Not Be Found`).textContent);
+                status.innerText = document.createTextNode('Artist IDs Displayed Successfully').textContent;
+            })
+            .catch(err => status.innerText = document.createTextNode(`Artists List Data Not Found`).textContent)
+        )
+        .catch(err => status.innerText = document.createTextNode(`Artists List Could Not Be Found`).textContent);
+    }
+    else{
+        status.innerText = document.createTextNode('Please Enter In A Value').textContent;
+    }
 }
 
 
