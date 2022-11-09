@@ -73,7 +73,7 @@ tracksRoute.route('/ttat/:track_title/:album_title')
         const at = strip(req.params.album_title);
         fs.createReadStream('./lab3-data/raw_tracks.csv').pipe(csv())
         .on('error', (error) => {return res.status(500).send(error.message)})
-        .on('data', (data) => {if((tracksRes.length<max) && ((tt.length>0 && data.track_title.includes(tt)) || (at.length>0 && data.album_title.includes(at)))) tracksRes.push(data.track_id);})
+        .on('data', (data) => {if((tracksRes.length<max) && ((tt.length>0 && data.track_title.toLowerCase().includes(tt)) || (at.length>0 && data.album_title.toLowerCase().includes(at)))) tracksRes.push(data);})
         .on('end', () => {res.send(tracksRes); tracksRes.length=0;});
     
     });
@@ -84,7 +84,7 @@ tracksRoute.route('/tt/:track_title')
         const tt = strip(req.params.track_title);
         fs.createReadStream('./lab3-data/raw_tracks.csv').pipe(csv())
         .on('error', (error) => {return res.status(500).send(error.message)})
-        .on('data', (data) => {if((tracksRes.length<max) && (tt.length>0 && data.track_title.includes(tt))) tracksRes.push(data.track_id);})
+        .on('data', (data) => {if((tracksRes.length<max) && (tt.length>0 && data.track_title.toLowerCase().includes(tt))) tracksRes.push(data);})
         .on('end', () => {res.send(tracksRes); tracksRes.length=0;});
     });
 
@@ -94,7 +94,7 @@ tracksRoute.route('/at/:album_title')
         const at = strip(req.params.album_title);
         fs.createReadStream('./lab3-data/raw_tracks.csv').pipe(csv())
         .on('error', (error) => {return res.status(500).send(error.message)})
-        .on('data', (data) => {if((tracksRes.length<max) && (at.length>0 && data.album_title.includes(at))) tracksRes.push(data.track_id);})
+        .on('data', (data) => {if((tracksRes.length<max) && (at.length>0 && data.album_title.toLowerCase().includes(at))) tracksRes.push(data);})
         .on('end', () => {res.send(tracksRes); tracksRes.length=0;});
     });
 
@@ -105,7 +105,7 @@ artistsRoute.route('/name/:artist_name')
         const name = strip(req.params.artist_name);
         fs.createReadStream('./lab3-data/raw_artists.csv').pipe(csv())
         .on('error', (error) => {return res.status(500).send(error.message)})
-        .on('data', (data) => {if(name.length>0 && data.artist_name.includes(name)) artistsRes.push(data.artist_id);})
+        .on('data', (data) => {if(name.length>0 && data.artist_name.toLowerCase().includes(name)) artistsRes.push(data.artist_id);})
         .on('end', () => {res.send(artistsRes); artistsRes.length=0;});
     });
 

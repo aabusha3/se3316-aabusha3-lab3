@@ -118,13 +118,18 @@ function step4(){
             fetch(`/api/tracks/ttat/${tt}/${at}`)
             .then(res => res.json()
                 .then(data => {
-                    if(data.length === 0) return status.innerText = document.createTextNode('No Track IDs Found').textContent;
+                    if(res.status === 404 || res.status === 500) return status.innerText = document.createTextNode(data).textContent;
                     for(d of data){
+                        if(d.length === 0) return status.innerText = document.createTextNode('No Track Info Found').textContent;
                         const li = document.createElement('li');
-                        li.appendChild(document.createTextNode(`Track ID: ${d}`))
+                        li.appendChild(document.createTextNode(`Track ID: ${d.track_id}: Album ID: ${d.album_id} Album Title: ${d.album_title} 
+                        Artist ID: ${d.artist_id} Artist Name: ${d.artist_name} Tags: ${d.tags} 
+                        Date Created: ${d.track_date_created} Date Recorded: ${d.track_date_recorded} 
+                        Duration: ${d.track_duration} Genres: ${d.track_genres} Track#: ${d.track_number} 
+                        Track Title: ${d.track_title}`));
                         ul.appendChild(li);
                     }
-                    status.innerText = document.createTextNode('Track IDs Displayed Successfully').textContent;
+                    status.innerText = document.createTextNode(`Tracks Found`).textContent;
                 })
                 .catch(err => status.innerText = document.createTextNode(`Tracks List Data Not Found`).textContent)
             )
@@ -134,13 +139,18 @@ function step4(){
             fetch(`/api/tracks/tt/${tt}`)
             .then(res => res.json()
                 .then(data => {
-                    if(data.length === 0) return status.innerText = document.createTextNode('No Track IDs Found').textContent;
+                    if(res.status === 404 || res.status === 500) return status.innerText = document.createTextNode(data).textContent;
                     for(d of data){
+                        if(d.length === 0) return status.innerText = document.createTextNode('No Track Info Found').textContent;
                         const li = document.createElement('li');
-                        li.appendChild(document.createTextNode(`Track ID: ${d}`))
+                        li.appendChild(document.createTextNode(`Track ID: ${d.track_id}: Album ID: ${d.album_id} Album Title: ${d.album_title} 
+                        Artist ID: ${d.artist_id} Artist Name: ${d.artist_name} Tags: ${d.tags} 
+                        Date Created: ${d.track_date_created} Date Recorded: ${d.track_date_recorded} 
+                        Duration: ${d.track_duration} Genres: ${d.track_genres} Track#: ${d.track_number} 
+                        Track Title: ${d.track_title}`));
                         ul.appendChild(li);
                     }
-                    status.innerText = document.createTextNode('Track IDs Displayed Successfully').textContent;
+                    status.innerText = document.createTextNode(`Tracks Found`).textContent;
                 })
                 .catch(err => status.innerText = document.createTextNode(`Tracks List Data Not Found`).textContent)
             )
@@ -152,13 +162,18 @@ function step4(){
             fetch(`/api/tracks/at/${at}`)
             .then(res => res.json()
                 .then(data => {
-                    if(data.length === 0) return status.innerText = document.createTextNode('No Track IDs Found').textContent;
+                    if(res.status === 404 || res.status === 500) return status.innerText = document.createTextNode(data).textContent;
                     for(d of data){
+                        if(d.length === 0) return status.innerText = document.createTextNode('No Track Info Found').textContent;
                         const li = document.createElement('li');
-                        li.appendChild(document.createTextNode(`Track ID: ${d}`))
+                        li.appendChild(document.createTextNode(`Track ID: ${d.track_id}: Album ID: ${d.album_id} Album Title: ${d.album_title} 
+                        Artist ID: ${d.artist_id} Artist Name: ${d.artist_name} Tags: ${d.tags} 
+                        Date Created: ${d.track_date_created} Date Recorded: ${d.track_date_recorded} 
+                        Duration: ${d.track_duration} Genres: ${d.track_genres} Track#: ${d.track_number} 
+                        Track Title: ${d.track_title}`));
                         ul.appendChild(li);
                     }
-                    status.innerText = document.createTextNode('Track IDs Displayed Successfully').textContent;
+                    status.innerText = document.createTextNode(`Tracks Found`).textContent;
                 })
                 .catch(err => status.innerText = document.createTextNode(`Tracks List Data Not Found`).textContent)
             )
