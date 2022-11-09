@@ -19,6 +19,7 @@ function step1(){
     fetch('/api/genres')
     .then(res => res.json()
         .then(data => {
+            console.log(data)
             data.forEach(d => {
                 const li = document.createElement('li');
                 li.appendChild(document.createTextNode(`Name: ${d.title} ID: ${d.genre_id} Parent: ${d.parent}`))
@@ -76,7 +77,7 @@ function step3(){
     const id = parseInt(document.getElementById('id_step3').value);
     const ul = document.getElementById('step3Result');
     while(ul.firstChild) ul.removeChild(ul.firstChild);
-    status.innerText = document.createTextNode('').textContent;
+    status.innerText = document.createTextNode('Searching The Archives, Please Be Patient').textContent;
 
     if(id.toString() === 'NaN') return status.innerText = document.createTextNode(`Entered Id Is Not A Number`).textContent;
     fetch(`/api/tracks/find/${id}`)
@@ -284,6 +285,7 @@ function step8(){
     .then(res => res.json()
         .then(data => {        
             if(res.status === 404 || res.status === 500) return status.innerText = document.createTextNode(data).textContent;
+            console.log(data)
             data.forEach(d => {
                 const li = document.createElement('li');
                 li.appendChild(document.createTextNode(`Track ID: ${d.track_id}: Album ID: ${d.album_id} Album Title: ${d.album_title} 

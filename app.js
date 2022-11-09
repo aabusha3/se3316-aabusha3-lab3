@@ -39,7 +39,7 @@ genresRoute.route('/')
         fs.createReadStream('./lab3-data/genres.csv').pipe(csv())
         .on('error', (error) => {return res.status(500).send(error.message)})
         .on('data', (data) => genresRes.push(data))
-        .on('end', () => {res.send(genresRes); genresRes.length=0;});
+        .on('end', () => {res.send(JSON.stringify(genresRes, ["genre_id", "title", "parent"])); genresRes.length=0;});
     });
 
 
@@ -49,18 +49,21 @@ artistsRoute.route('/id/:artist_id')
         const rId = parseInt(req.params.artist_id);
         fs.createReadStream('./lab3-data/raw_artists.csv').pipe(csv())
         .on('error', (error) => {return res.status(500).send(error.message)})
-        .on('data', (data) => {if(parseInt(data.artist_id) === rId) res.send(data);})
+        .on('data', (data) => {if(parseInt(data.artist_id) === rId) res.send(JSON.stringify(data, ["artist_id", 
+        "artist_name", "artist_handle", "tags", "artist_url", "artist_favorites", "artist_comments", "artist_date_created"]));})
         .on('end', () => {if(!res.writableEnded) res.status(404).send(JSON.stringify(`Artist ID '${rId}' Does Not Exist`));});
     });
-    
 
+    
 //step 3
 tracksRoute.route('/find/:track_id')
     .get((req, res) => {
         const tId = parseInt(req.params.track_id);
         fs.createReadStream('./lab3-data/raw_tracks.csv').pipe(csv())
         .on('error', (error) => {return res.status(500).send(error.message)})
-        .on('data', (data) => {if(parseInt(data.track_id) === tId) res.send(data);})
+        .on('data', (data) => {if(parseInt(data.track_id) === tId) res.send(JSON.stringify(data, ["album_id", 
+        "album_title", "artist_id", "artist_name", "tags", "track_date_created", "track_date_recorded", "track_duration",
+        "track_genres", "track_number", "track_title"]));})
         .on('end', () => {if(!res.writableEnded) res.status(404).send(JSON.stringify(`Track ID '${tId}' Does Not Exist`));});
     });
 
@@ -74,7 +77,9 @@ tracksRoute.route('/ttat/:track_title/:album_title')
         fs.createReadStream('./lab3-data/raw_tracks.csv').pipe(csv())
         .on('error', (error) => {return res.status(500).send(error.message)})
         .on('data', (data) => {if((tracksRes.length<max) && ((tt.length>0 && data.track_title.toLowerCase().includes(tt)) || (at.length>0 && data.album_title.toLowerCase().includes(at)))) tracksRes.push(data);})
-        .on('end', () => {res.send(tracksRes); tracksRes.length=0;});
+        .on('end', () => {res.send(JSON.stringify(tracksRes, ["track_id", "album_id", "album_title",
+        "artist_id", "artist_name", "tags", "track_date_created", "track_date_recorded", 
+        "track_duration", "track_genres", "track_number", "track_title"])); tracksRes.length=0;});
     
     });
 
@@ -85,7 +90,9 @@ tracksRoute.route('/tt/:track_title')
         fs.createReadStream('./lab3-data/raw_tracks.csv').pipe(csv())
         .on('error', (error) => {return res.status(500).send(error.message)})
         .on('data', (data) => {if((tracksRes.length<max) && (tt.length>0 && data.track_title.toLowerCase().includes(tt))) tracksRes.push(data);})
-        .on('end', () => {res.send(tracksRes); tracksRes.length=0;});
+        .on('end', () => {res.send(JSON.stringify(tracksRes, ["track_id", "album_id", "album_title",
+        "artist_id", "artist_name", "tags", "track_date_created", "track_date_recorded", 
+        "track_duration", "track_genres", "track_number", "track_title"])); tracksRes.length=0;});
     });
 
 tracksRoute.route('/at/:album_title')
@@ -95,7 +102,9 @@ tracksRoute.route('/at/:album_title')
         fs.createReadStream('./lab3-data/raw_tracks.csv').pipe(csv())
         .on('error', (error) => {return res.status(500).send(error.message)})
         .on('data', (data) => {if((tracksRes.length<max) && (at.length>0 && data.album_title.toLowerCase().includes(at))) tracksRes.push(data);})
-        .on('end', () => {res.send(tracksRes); tracksRes.length=0;});
+        .on('end', () => {res.send(JSON.stringify(tracksRes, ["track_id", "album_id", "album_title",
+        "artist_id", "artist_name", "tags", "track_date_created", "track_date_recorded", 
+        "track_duration", "track_genres", "track_number", "track_title"])); tracksRes.length=0;});
     });
 
 
@@ -106,7 +115,8 @@ artistsRoute.route('/name/:artist_name')
         fs.createReadStream('./lab3-data/raw_artists.csv').pipe(csv())
         .on('error', (error) => {return res.status(500).send(error.message)})
         .on('data', (data) => {if(name.length>0 && data.artist_name.toLowerCase().includes(name)) artistsRes.push(data);})
-        .on('end', () => {res.send(artistsRes); artistsRes.length=0;});
+        .on('end', () => {res.send(JSON.stringify(artistsRes, ["artist_id", "artist_name", "artist_handle",
+        "tags", "artist_url", "artist_favorites", "artist_comments", "artist_date_created"])); artistsRes.length=0;});
     });
 
 
@@ -155,7 +165,10 @@ listsRoute.route('/write/:name/:id')
                                 }
                                 if(!exst){
                                     writeData = data.length>0? data.concat([row]) : [row];
-                                    fs.writeFile(path, JSON.stringify(writeData), function (error) {
+                                    writeData = JSON.stringify(writeData, ["track_id", "album_id", "album_title",
+                                    "artist_id", "artist_name", "tags", "track_date_created", "track_date_recorded", 
+                                    "track_duration", "track_genres", "track_number", "track_title"]);
+                                    fs.writeFile(path, writeData, function (error) {
                                         if (error) return res.status(404).send(JSON.stringify(`Track Id '${id}' Could Not Be Added`));
                                         else return res.send(JSON.stringify(`Track Id '${id}' Successfully Added`));
                                     });
@@ -175,7 +188,7 @@ listsRoute.route('/write/:name/:id')
 listsRoute.route('/read/:name')
     .get((req, res) => {
         const name = strip(req.params.name);
-        const path = `./StoredLists/${name}.json`
+        const path = `./StoredLists/${name}.json`;
         fs.access(path, fs.F_OK, (err) => {
             if(err) return res.status(404).send(JSON.stringify(`List '${name}' Does Not Exist`));
             else{
