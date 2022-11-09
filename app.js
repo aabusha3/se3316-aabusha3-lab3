@@ -105,7 +105,7 @@ artistsRoute.route('/name/:artist_name')
         const name = strip(req.params.artist_name);
         fs.createReadStream('./lab3-data/raw_artists.csv').pipe(csv())
         .on('error', (error) => {return res.status(500).send(error.message)})
-        .on('data', (data) => {if(name.length>0 && data.artist_name.toLowerCase().includes(name)) artistsRes.push(data.artist_id);})
+        .on('data', (data) => {if(name.length>0 && data.artist_name.toLowerCase().includes(name)) artistsRes.push(data);})
         .on('end', () => {res.send(artistsRes); artistsRes.length=0;});
     });
 

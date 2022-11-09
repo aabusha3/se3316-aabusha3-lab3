@@ -50,7 +50,7 @@ function step2(){
     fetch(`/api/artists/id/${id}`)
     .then(res => res.json()
         .then(d => {
-            if(res.status === 404) return status.innerText = document.createTextNode(d).textContent;
+            if(res.status === 404 || res.status === 500) return status.innerText = document.createTextNode(d).textContent;
             const li = document.createElement('li');
             li.appendChild(document.createTextNode(`ID: ${d.artist_id} Name: ${d.artist_name} 
             Handle: ${d.artist_handle} Tags: ${d.tags} URL: ${d.artist_url} Favorites: ${d.artist_favorites} 
@@ -82,7 +82,7 @@ function step3(){
     fetch(`/api/tracks/find/${id}`)
     .then(res => res.json()
         .then(d => {
-            if(res.status === 404) return status.innerText = document.createTextNode(d).textContent;
+            if(res.status === 404 || res.status === 500) return status.innerText = document.createTextNode(d).textContent;
             const li = document.createElement('li');
             li.appendChild(document.createTextNode(`Album ID: ${d.album_id} Album Title: ${d.album_title} 
             Artist ID: ${d.artist_id} Artist Name: ${d.artist_name} Tags: ${d.tags} 
@@ -119,8 +119,8 @@ function step4(){
             .then(res => res.json()
                 .then(data => {
                     if(res.status === 404 || res.status === 500) return status.innerText = document.createTextNode(data).textContent;
+                    if(data.length === 0) return status.innerText = document.createTextNode('No Track Info Found').textContent;
                     for(d of data){
-                        if(d.length === 0) return status.innerText = document.createTextNode('No Track Info Found').textContent;
                         const li = document.createElement('li');
                         li.appendChild(document.createTextNode(`Track ID: ${d.track_id}: Album ID: ${d.album_id} Album Title: ${d.album_title} 
                         Artist ID: ${d.artist_id} Artist Name: ${d.artist_name} Tags: ${d.tags} 
@@ -140,8 +140,8 @@ function step4(){
             .then(res => res.json()
                 .then(data => {
                     if(res.status === 404 || res.status === 500) return status.innerText = document.createTextNode(data).textContent;
+                    if(data.length === 0) return status.innerText = document.createTextNode('No Track Info Found').textContent;
                     for(d of data){
-                        if(d.length === 0) return status.innerText = document.createTextNode('No Track Info Found').textContent;
                         const li = document.createElement('li');
                         li.appendChild(document.createTextNode(`Track ID: ${d.track_id}: Album ID: ${d.album_id} Album Title: ${d.album_title} 
                         Artist ID: ${d.artist_id} Artist Name: ${d.artist_name} Tags: ${d.tags} 
@@ -163,8 +163,8 @@ function step4(){
             .then(res => res.json()
                 .then(data => {
                     if(res.status === 404 || res.status === 500) return status.innerText = document.createTextNode(data).textContent;
+                    if(data.length === 0) return status.innerText = document.createTextNode('No Track Info Found').textContent;
                     for(d of data){
-                        if(d.length === 0) return status.innerText = document.createTextNode('No Track Info Found').textContent;
                         const li = document.createElement('li');
                         li.appendChild(document.createTextNode(`Track ID: ${d.track_id}: Album ID: ${d.album_id} Album Title: ${d.album_title} 
                         Artist ID: ${d.artist_id} Artist Name: ${d.artist_name} Tags: ${d.tags} 
@@ -204,13 +204,16 @@ function step5(){
         fetch(`/api/artists/name/${name}`)
         .then(res => res.json()
             .then(data => {
+                if(res.status === 404 || res.status === 500) return status.innerText = document.createTextNode(data).textContent;
                 if(data.length === 0) return status.innerText = document.createTextNode('No Artist IDs Found').textContent;
                 for(d of data){
                     const li = document.createElement('li');
-                    li.appendChild(document.createTextNode(`Artist ID: ${d}`))
+                    li.appendChild(document.createTextNode(`ID: ${d.artist_id} Name: ${d.artist_name} 
+                    Handle: ${d.artist_handle} Tags: ${d.tags} URL: ${d.artist_url} Favorites: ${d.artist_favorites} 
+                    Comments: ${d.artist_comments} Date Created: ${d.artist_date_created}`));
                     ul.appendChild(li);
                 }
-                status.innerText = document.createTextNode('Artist IDs Displayed Successfully').textContent;
+                status.innerText = document.createTextNode('Artists Found').textContent;
             })
             .catch(err => status.innerText = document.createTextNode(`Artists List Data Not Found`).textContent)
         )
@@ -280,7 +283,7 @@ function step8(){
     fetch(`/api/lists/read/${name}`)
     .then(res => res.json()
         .then(data => {        
-            if(res.status === 404) return status.innerText = document.createTextNode(data).textContent;
+            if(res.status === 404 || res.status === 500) return status.innerText = document.createTextNode(data).textContent;
             data.forEach(d => {
                 const li = document.createElement('li');
                 li.appendChild(document.createTextNode(`Track ID: ${d.track_id}: Album ID: ${d.album_id} Album Title: ${d.album_title} 
@@ -323,7 +326,7 @@ function step10(){
             });
             status.innerText = document.createTextNode('Lists Displayed Successfully').textContent;
         }
-        else if(res.status === 404)
+        else if(res.status === 404 || res.status === 500)
             status.innerText = document.createTextNode(data).textContent;
         })
         .catch(err => status.innerText = document.createTextNode(`Lists Data Not Found`))
