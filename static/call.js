@@ -264,18 +264,18 @@ function step8(){
     
     fetch(`/api/lists/read/${name}`)
     .then(res => res.json()
-        .then(data => {
-            if(res.status === 200){
-                data.forEach(d => {
-                    const li = document.createElement('li');
-                    li.appendChild(document.createTextNode(`Track ID: ${d.track_id} Track Title: ${d.track_title} 
-                    Track Duration: ${d.track_duration} Artist ID: ${d.artist_id} Artist Name: ${d.artist_name} 
-                    Album ID: ${d.album_id} Album Name: ${d.album_title}`));
-                    ul.appendChild(li);
-                });
-                return status.innerText = document.createTextNode('Ids In List Displayed Successfully').textContent;
-            }
-            else if(res.status === 404) return status.innerText = document.createTextNode(data).textContent;
+        .then(data => {        
+            if(res.status === 404) return status.innerText = document.createTextNode(data).textContent;
+            data.forEach(d => {
+                const li = document.createElement('li');
+                li.appendChild(document.createTextNode(`Track ID: ${d.track_id}: Album ID: ${d.album_id} Album Title: ${d.album_title} 
+                Artist ID: ${d.artist_id} Artist Name: ${d.artist_name} Tags: ${d.tags} 
+                Date Created: ${d.track_date_created} Date Recorded: ${d.track_date_recorded} 
+                Duration: ${d.track_duration} Genres: ${d.track_genres} Track#: ${d.track_number} 
+                Track Title: ${d.track_title}`));
+                ul.appendChild(li);
+                status.innerText = document.createTextNode('Ids In List Displayed Successfully').textContent;
+            });
         })
         .catch(err => status.innerText = document.createTextNode(`List Data Not Found`).textContent)
     )

@@ -154,21 +154,7 @@ listsRoute.route('/write/:name/:id')
                                     }
                                 }
                                 if(!exst){
-                                    writeData = data.length>0? 
-                                    (data.concat([{'track_id':`${id}`,
-                                    'track_title':row.track_title,  
-                                    'track_duration':row.track_duration, 
-                                    'artist_id':row.artist_id, 
-                                    'artist_name':row.artist_name,
-                                    'album_id':row.album_id, 
-                                    'album_title':row.album_title}])) 
-                                    : ([{'track_id':`${id}`,
-                                    'track_title':row.track_title,  
-                                    'track_duration':row.track_duration, 
-                                    'artist_id':row.artist_id, 
-                                    'artist_name':row.artist_name,
-                                    'album_id':row.album_id, 
-                                    'album_title':row.album_title}]);
+                                    writeData = data.length>0? data.concat([row]) : [row];
                                     fs.writeFile(path, JSON.stringify(writeData), function (error) {
                                         if (error) return res.status(404).send(JSON.stringify(`Track Id '${id}' Could Not Be Added`));
                                         else return res.send(JSON.stringify(`Track Id '${id}' Successfully Added`));
@@ -182,55 +168,6 @@ listsRoute.route('/write/:name/:id')
             }
         })
         .on('end', () => {if(!res.writableEnded) res.status(404).send(JSON.stringify(`Track ID '${id}' Does Not Exist`));});
- 
-
-        //const indexID = tracksArr.findIndex(t => parseInt(t.track_id) === id);
-        // if(indexID >= 0){
-        //     fs.access(path, fs.F_OK, (err) => {
-        //         if (err) return res.status(404).send(JSON.stringify(`List '${name}' Does Not Exist`));
-        //         else {
-        //             let writeData = [];
-        //             fs.readFile(path, function(err, data) {
-        //                 if (err) return res.status(404).send(JSON.stringify(`List '${name}' Could Not Be Read`));
-        //                 else {
-        //                     let exst = false;
-        //                     if(data.length>0) data = JSON.parse(data);
-        //                     for(d of data){
-        //                         if(parseInt(d.track_id) === id){
-        //                             exst = true;
-        //                             break;
-        //                         }
-        //                     }
-        //                     if(!exst){
-        //                         writeData = data.length>0? 
-        //                         (data.concat([{'track_id':`${id}`,
-        //                         'track_title':tracksArr[indexID].track_title,  
-        //                         'track_duration':tracksArr[indexID].track_duration, 
-        //                         'artist_id':tracksArr[indexID].artist_id, 
-        //                         'artist_name':tracksArr[indexID].artist_name,
-        //                         'album_id':tracksArr[indexID].album_id, 
-        //                         'album_title':tracksArr[indexID].album_title}])) 
-        //                         : ([{'track_id':`${id}`,
-        //                         'track_title':tracksArr[indexID].track_title,  
-        //                         'track_duration':tracksArr[indexID].track_duration, 
-        //                         'artist_id':tracksArr[indexID].artist_id, 
-        //                         'artist_name':tracksArr[indexID].artist_name,
-        //                         'album_id':tracksArr[indexID].album_id, 
-        //                         'album_title':tracksArr[indexID].album_title}]);
-        //                         fs.writeFile(path, JSON.stringify(writeData), function (errr) {
-        //                             if (errr) return res.status(404).send(JSON.stringify(`Track Id '${id}' Could Not Be Added`));
-        //                             else return res.send(JSON.stringify(`Track Id '${id}' Successfully Added`));
-        //                         });
-        //                     }
-        //                     else return res.status(404).send(JSON.stringify(`Tracks ID '${id}' Is Already In Your List`));
-        //                 }
-        //             });
-        //         }
-        //     });
-        // }
-        
-        
-        //else return res.status(404).send(JSON.stringify(`Tracks ID '${id}' Does Not Exist In The Track File`));
     });
 
 
