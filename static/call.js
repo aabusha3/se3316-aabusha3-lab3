@@ -105,6 +105,21 @@ function step4Clear(){
     while(ul.firstChild) ul.removeChild(ul.firstChild);
     document.getElementById('step4Status').innerText = document.createTextNode('Filtered Track Ids Cleared Successfully').textContent;
 }
+var trackClicked = false
+document.getElementById('sortByTrack').addEventListener('click', function() {
+    trackClicked = true;
+    step4();
+});
+var albumClicked = false
+document.getElementById('sortByAlbum').addEventListener('click', function() {
+    albumClicked = true;
+    step4();
+});
+var lengthClicked = false
+document.getElementById('sortByLength').addEventListener('click', function() {
+    lengthClicked = true;
+    step4();
+});
 document.getElementById('step4').addEventListener('click', step4);
 function step4(){
     const status = document.getElementById('step4Status');
@@ -121,7 +136,16 @@ function step4(){
                 .then(data => {
                     if(res.status === 404 || res.status === 500) return status.innerText = document.createTextNode(data).textContent;
                     if(data.length === 0) return status.innerText = document.createTextNode('No Track Info Found').textContent;
-                    for(d of data){
+                    
+                    let sortedData = data;
+                    if(trackClicked)
+                        sortedData = data.sort((p1, p2) => (p1.track_title < p2.track_title) ? 1 : (p1.track_title > p2.track_title) ? -1 : 0);
+                    else if(albumClicked)
+                        sortedData = data.sort((p1, p2) => (p1.album_title < p2.album_title) ? 1 : (p1.album_title > p2.album_title) ? -1 : 0);
+                    else if(lengthClicked)
+                        sortedData = data.sort((p1, p2) => (p1.track_duration < p2.track_duration) ? 1 : (p1.track_duration > p2.track_duration) ? -1 : 0);
+                     
+                    for(d of sortedData){
                         const li = document.createElement('li');
                         li.appendChild(document.createTextNode(`Track ID: ${d.track_id}: Album ID: ${d.album_id} Album Title: ${d.album_title} 
                         Artist ID: ${d.artist_id} Artist Name: ${d.artist_name} Tags: ${d.tags} 
@@ -142,7 +166,16 @@ function step4(){
                 .then(data => {
                     if(res.status === 404 || res.status === 500) return status.innerText = document.createTextNode(data).textContent;
                     if(data.length === 0) return status.innerText = document.createTextNode('No Track Info Found').textContent;
-                    for(d of data){
+                    
+                    let sortedData = data;
+                    if(trackClicked)
+                        sortedData = data.sort((p1, p2) => (p1.track_title < p2.track_title) ? 1 : (p1.track_title > p2.track_title) ? -1 : 0);
+                    else if(albumClicked)
+                        sortedData = data.sort((p1, p2) => (p1.album_title < p2.album_title) ? 1 : (p1.album_title > p2.album_title) ? -1 : 0);
+                    else if(lengthClicked)
+                        sortedData = data.sort((p1, p2) => (p1.track_duration < p2.track_duration) ? 1 : (p1.track_duration > p2.track_duration) ? -1 : 0);
+                     
+                    for(d of sortedData){
                         const li = document.createElement('li');
                         li.appendChild(document.createTextNode(`Track ID: ${d.track_id}: Album ID: ${d.album_id} Album Title: ${d.album_title} 
                         Artist ID: ${d.artist_id} Artist Name: ${d.artist_name} Tags: ${d.tags} 
@@ -165,7 +198,16 @@ function step4(){
                 .then(data => {
                     if(res.status === 404 || res.status === 500) return status.innerText = document.createTextNode(data).textContent;
                     if(data.length === 0) return status.innerText = document.createTextNode('No Track Info Found').textContent;
-                    for(d of data){
+                    
+                    let sortedData = data;
+                    if(trackClicked)
+                        sortedData = data.sort((p1, p2) => (p1.track_title < p2.track_title) ? 1 : (p1.track_title > p2.track_title) ? -1 : 0);
+                    else if(albumClicked)
+                        sortedData = data.sort((p1, p2) => (p1.album_title < p2.album_title) ? 1 : (p1.album_title > p2.album_title) ? -1 : 0);
+                    else if(lengthClicked)
+                        sortedData = data.sort((p1, p2) => (p1.track_duration < p2.track_duration) ? 1 : (p1.track_duration > p2.track_duration) ? -1 : 0);
+
+                    for(d of sortedData){
                         const li = document.createElement('li');
                         li.appendChild(document.createTextNode(`Track ID: ${d.track_id}: Album ID: ${d.album_id} Album Title: ${d.album_title} 
                         Artist ID: ${d.artist_id} Artist Name: ${d.artist_name} Tags: ${d.tags} 
@@ -193,6 +235,11 @@ function step5Clear(){
     while(ul.firstChild) ul.removeChild(ul.firstChild);
     document.getElementById('step5Status').innerText = document.createTextNode('Filtered Artist Ids Cleared Successfully').textContent;
 }
+var artistClicked = false
+document.getElementById('sortByArtist').addEventListener('click', function() {
+    artistClicked = true;
+    step5();
+});
 document.getElementById('step5').addEventListener('click', step5);
 function step5(){
     const status = document.getElementById('step5Status');
@@ -207,7 +254,12 @@ function step5(){
             .then(data => {
                 if(res.status === 404 || res.status === 500) return status.innerText = document.createTextNode(data).textContent;
                 if(data.length === 0) return status.innerText = document.createTextNode('No Artist IDs Found').textContent;
-                for(d of data){
+                
+                let sortedData = data;
+                if(artistClicked)
+                    sortedData = data.sort((p1, p2) => (p1.artist_name < p2.artist_name) ? 1 : (p1.artist_name > p2.artist_name) ? -1 : 0);
+                 
+                for(d of sortedData){
                     const li = document.createElement('li');
                     li.appendChild(document.createTextNode(`ID: ${d.artist_id} Name: ${d.artist_name} 
                     Handle: ${d.artist_handle} Tags: ${d.tags} URL: ${d.artist_url} Favorites: ${d.artist_favorites} 

@@ -111,10 +111,11 @@ tracksRoute.route('/at/:album_title')
 //step 5
 artistsRoute.route('/name/:artist_name')
     .get((req, res) => {   
+        const max = 12 
         const name = strip(req.params.artist_name);
         fs.createReadStream('./lab3-data/raw_artists.csv').pipe(csv())
         .on('error', (error) => {return res.status(500).send(error.message)})
-        .on('data', (data) => {if(name.length>0 && data.artist_name.toLowerCase().includes(name)) artistsRes.push(data);})
+        .on('data', (data) => {if((artistsRes.length<max) && (name.length>0 && data.artist_name.toLowerCase().includes(name))) artistsRes.push(data);})
         .on('end', () => {res.send(JSON.stringify(artistsRes, ["artist_id", "artist_name", "artist_handle",
         "tags", "artist_url", "artist_favorites", "artist_comments", "artist_date_created"])); artistsRes.length=0;});
     });
